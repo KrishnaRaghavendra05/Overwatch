@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=75.8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "geo-change-agent"
+version = "0.1.0"
+description = "Geospatial land-cover change agent with human-gated report filing"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy==2.5.2",
+    "pydantic==2.13.4",
+    "fastapi==0.141.1",
+    "uvicorn==0.52.4",
+    "jinja2==3.1.6",
+    "httpx==0.28.1",
+    "python-dotenv==1.2.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.1.1",
+    "ruff==0.16.4",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["core*", "agent*", "dashboard*", "scripts*"]
+
+[tool.pytest.ini_options]
+testpaths = ["core/tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = []
