@@ -1,4 +1,4 @@
-# geo-change-agent
+# Overwatch
 
 Satellite land-cover change detection agent with human-gated report filing, built for the TrueForge Agent Harness Hackathon.
 
