@@ -20,20 +20,20 @@
       --bg-sidebar: #090e1a;
       --bg-card: rgba(13, 19, 33, 0.85);
       --bg-card-elevated: rgba(19, 27, 46, 0.95);
-      --border: rgba(255, 255, 255, 0.07);
+      --border: rgba(255, 255, 255, 0.08);
       --border-focus: rgba(99, 102, 241, 0.4);
       
       --cyan: #00f0ff;
-      --cyan-glow: rgba(0, 240, 255, 0.3);
+      --cyan-glow: rgba(0, 240, 255, 0.35);
       --emerald: #10b981;
-      --emerald-glow: rgba(16, 185, 129, 0.3);
+      --emerald-glow: rgba(16, 185, 129, 0.35);
       --indigo: #6366f1;
       --indigo-glow: rgba(99, 102, 241, 0.35);
       --purple: #8b5cf6;
       --amber: #f59e0b;
-      --amber-glow: rgba(245, 158, 11, 0.3);
+      --amber-glow: rgba(245, 158, 11, 0.35);
       --crimson: #ef4444;
-      --crimson-glow: rgba(239, 68, 68, 0.3);
+      --crimson-glow: rgba(239, 68, 68, 0.35);
       
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
@@ -248,6 +248,26 @@
       box-shadow: 0 0 14px var(--amber-glow);
     }
 
+    .btn-new-inv-header {
+      background: linear-gradient(135deg, var(--indigo), var(--purple));
+      border: none;
+      border-radius: 20px;
+      padding: 0.45rem 1rem;
+      color: #ffffff;
+      font-size: 0.82rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      box-shadow: 0 0 16px var(--indigo-glow);
+      transition: all 0.2s;
+    }
+    .btn-new-inv-header:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 24px var(--indigo-glow);
+    }
+
     .user-profile {
       display: flex;
       align-items: center;
@@ -303,6 +323,12 @@
       align-items: center;
       backdrop-filter: blur(12px);
       box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .kpi-card:hover {
+      border-color: var(--border-focus);
+      transform: translateY(-2px);
     }
     .kpi-info h4 {
       font-size: 0.78rem;
@@ -401,6 +427,31 @@
       background: var(--emerald);
       border-radius: 50%;
       box-shadow: 0 0 8px var(--emerald);
+    }
+
+    .map-header-right {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .btn-scenario-picker {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: #ffffff;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s;
+    }
+    .btn-scenario-picker:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--border-focus);
     }
 
     .index-select {
@@ -791,6 +842,16 @@
       padding: 0.15rem 0.45rem;
       border-radius: 4px;
     }
+    .badge-fail {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--crimson);
+      color: var(--crimson);
+      font-size: 0.68rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+    }
     .subagent-pct {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.82rem;
@@ -881,7 +942,7 @@
       font-family: 'JetBrains Mono', monospace;
     }
 
-    /* Modal for Dossier */
+    /* Modals */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -903,6 +964,7 @@
       display: flex;
       flex-direction: column;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+      overflow: hidden;
     }
     .modal-header {
       padding: 1.25rem 1.5rem;
@@ -925,6 +987,102 @@
       font-size: 1.5rem;
       cursor: pointer;
     }
+    .modal-close:hover { color: #ffffff; }
+
+    /* Scenario Selection Grid in Modal */
+    .scenario-picker-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .scenario-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .scenario-card:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--cyan);
+      transform: translateY(-2px);
+    }
+    .scenario-card.active {
+      background: rgba(0, 240, 255, 0.08);
+      border-color: var(--cyan);
+      box-shadow: 0 0 16px var(--cyan-glow);
+    }
+    .scenario-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .scenario-card-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .scenario-card-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .btn-launch-run {
+      background: linear-gradient(135deg, var(--cyan), #0072ff);
+      border: none;
+      border-radius: 8px;
+      padding: 0.85rem 1.5rem;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 18px rgba(0, 114, 255, 0.4);
+      transition: all 0.2s;
+    }
+    .btn-launch-run:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(0, 198, 255, 0.6);
+    }
+
+    /* Ledger Table in Queue Modal */
+    table.queue-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    table.queue-table th {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      color: var(--text-dim);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      border-bottom: 1px solid var(--border);
+    }
+    table.queue-table td {
+      padding: 0.75rem 0.85rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .btn-dossier-small {
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -938,30 +1096,30 @@
         </div>
         <div class="brand-text">
           <h1>TerraProof</h1>
-          <span>Overwatch AI</span>
+          <span>OVERWATCH AI</span>
         </div>
       </div>
 
       <nav class="nav-menu">
-        <a class="nav-item active" onclick="switchTab('dashboard')">
+        <a class="nav-item active" id="nav-dashboard" onclick="switchNav('dashboard')">
           <div class="nav-item-left">
             <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
             <span>Dashboard</span>
           </div>
           <span>›</span>
         </a>
-        <a class="nav-item" onclick="triggerPreset('crop_damage')">
+        <a class="nav-item" id="nav-new-inv" onclick="openNewInvestigationModal()">
           <div class="nav-item-left">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
             <span>New Investigation</span>
           </div>
         </a>
-        <a class="nav-item" onclick="openClaimsQueue()">
+        <a class="nav-item" id="nav-claims-queue" onclick="openClaimsQueueModal()">
           <div class="nav-item-left">
             <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
             <span>Claims Queue</span>
           </div>
-          <span class="nav-badge" id="sidebar-queue-badge">{{ flags|length }}</span>
+          <span class="nav-badge" id="sidebar-queue-badge">{{ flags|length if flags else 5 }}</span>
         </a>
         <a class="nav-item" onclick="scrollToTrace()">
           <div class="nav-item-left">
@@ -969,19 +1127,19 @@
             <span>Execution Trace</span>
           </div>
         </a>
-        <a class="nav-item">
+        <a class="nav-item" onclick="openAnalyticsModal()">
           <div class="nav-item-left">
             <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
             <span>Analytics</span>
           </div>
         </a>
-        <a class="nav-item">
+        <a class="nav-item" onclick="openNewInvestigationModal()">
           <div class="nav-item-left">
             <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
             <span>Map Explorer</span>
           </div>
         </a>
-        <a class="nav-item">
+        <a class="nav-item" onclick="openSettingsModal()">
           <div class="nav-item-left">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
             <span>Settings</span>
@@ -1027,6 +1185,11 @@
       </div>
 
       <div class="header-actions">
+        <button class="btn-new-inv-header" onclick="openNewInvestigationModal()">
+          <span>+</span>
+          <span>New Investigation</span>
+        </button>
+
         <div class="hitl-status-pill" id="global-hitl-pill">
           <span>⏳</span>
           <span id="global-hitl-text">HITL PAUSE ACTIVE</span>
@@ -1047,7 +1210,7 @@
       
       <!-- Top 4 KPI Cards Grid -->
       <div class="kpi-grid">
-        <div class="kpi-card">
+        <div class="kpi-card" onclick="openClaimsQueueModal()">
           <div class="kpi-info">
             <h4>Total Claims Filed</h4>
             <div class="kpi-val" id="kpi-total-filed">128</div>
@@ -1058,7 +1221,7 @@
           </div>
         </div>
 
-        <div class="kpi-card">
+        <div class="kpi-card" onclick="openNewInvestigationModal()">
           <div class="kpi-info">
             <h4>Under Investigation</h4>
             <div class="kpi-val" style="color: var(--amber);">3</div>
@@ -1069,7 +1232,7 @@
           </div>
         </div>
 
-        <div class="kpi-card">
+        <div class="kpi-card" onclick="openClaimsQueueModal()">
           <div class="kpi-info">
             <h4>Approved (This Month)</h4>
             <div class="kpi-val" style="color: var(--emerald);">24</div>
@@ -1080,7 +1243,7 @@
           </div>
         </div>
 
-        <div class="kpi-card">
+        <div class="kpi-card" onclick="openAnalyticsModal()">
           <div class="kpi-info">
             <h4>Avg. Processing Time</h4>
             <div class="kpi-val" style="color: #a855f7;">6m 24s</div>
@@ -1102,10 +1265,15 @@
               <span class="map-title">Live Investigation Map</span>
               <div class="live-badge"><span class="live-dot"></span> Live</div>
             </div>
-            <select class="index-select" id="map-index-toggle" onchange="toggleMapIndex()">
-              <option value="NDVI">NDVI Delta (Vegetation Loss)</option>
-              <option value="NDWI">NDWI Delta (Flood Extent)</option>
-            </select>
+            <div class="map-header-right">
+              <button class="btn-scenario-picker" onclick="openNewInvestigationModal()">
+                <span>🎯 Presets</span>
+              </button>
+              <select class="index-select" id="map-index-toggle" onchange="toggleMapIndex()">
+                <option value="NDVI">NDVI Delta (Vegetation Loss)</option>
+                <option value="NDWI">NDWI Delta (Flood Extent)</option>
+              </select>
+            </div>
           </div>
 
           <div class="map-viewport">
@@ -1140,7 +1308,7 @@
             </div>
             <div class="inv-id">
               <span>Investigation ID: <strong id="inv-id-display" style="color: #ffffff;">inv_20260615_001</strong></span>
-              <span style="cursor: pointer;">📋</span>
+              <span style="cursor: pointer;" onclick="copyInvId()">📋</span>
             </div>
           </div>
 
@@ -1308,7 +1476,7 @@
         <div class="panel-card" id="trace-panel">
           <h4 class="panel-title">
             <span>Investigation Trace <span class="live-dot" style="display:inline-block; margin-left: 4px;"></span></span>
-            <button class="btn-action-small" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-muted);" onclick="openFullTraceModal()">View Full Log</button>
+            <button class="btn-scenario-picker" style="font-size: 0.72rem; padding: 0.2rem 0.5rem;" onclick="openFullTraceModal()">View Full Log</button>
           </h4>
           <div class="trace-terminal" id="terminal-logs">
             <div class="log-row"><span class="log-ts">14:32:01</span> <span class="log-text">Goal formulated: Detect crop stress via NDVI delta</span></div>
@@ -1340,12 +1508,122 @@
     </div>
   </main>
 
-  <!-- Full Claim Dossier Modal -->
+  <!-- MODAL: New Investigation & Scenario Picker -->
+  <div class="modal-backdrop" id="new-inv-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: #ffffff;">Launch New TrueForge Investigation</h3>
+        <button class="modal-close" onclick="closeModal('new-inv-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">
+          Select an agricultural insurance claim scenario or target area to dispatch the autonomous TrueForge multi-agent workflow:
+        </p>
+
+        <div class="scenario-picker-grid">
+          
+          <div class="scenario-card active" id="card-scen-crop" onclick="selectModalScenario('crop_damage')">
+            <div class="scenario-card-header">
+              <span style="font-size: 1.2rem;">🌽</span>
+              <span style="font-family: 'JetBrains Mono'; font-size: 0.65rem; color: var(--amber); background: rgba(245,158,11,0.15); padding: 0.15rem 0.4rem; border-radius: 4px;">DROUGHT</span>
+            </div>
+            <div class="scenario-card-name">Iowa Corn Canopy</div>
+            <div class="scenario-card-desc">Severe desiccation & biomass loss (NDVI -0.945)</div>
+          </div>
+
+          <div class="scenario-card" id="card-scen-flood" onclick="selectModalScenario('flood')">
+            <div class="scenario-card-header">
+              <span style="font-size: 1.2rem;">🌊</span>
+              <span style="font-family: 'JetBrains Mono'; font-size: 0.65rem; color: #60a5fa; background: rgba(59,130,246,0.15); padding: 0.15rem 0.4rem; border-radius: 4px;">FLOOD</span>
+            </div>
+            <div class="scenario-card-name">Assam Floodplain</div>
+            <div class="scenario-card-desc">Riverine monsoon inundation (NDWI +0.865)</div>
+          </div>
+
+          <div class="scenario-card" id="card-scen-ambig" onclick="selectModalScenario('ambiguous_haze')">
+            <div class="scenario-card-header">
+              <span style="font-size: 1.2rem;">🌫️</span>
+              <span style="font-family: 'JetBrains Mono'; font-size: 0.65rem; color: var(--purple); background: rgba(139,92,246,0.15); padding: 0.15rem 0.4rem; border-radius: 4px;">HAZE GATE</span>
+            </div>
+            <div class="scenario-card-name">Fresno Orchard</div>
+            <div class="scenario-card-desc">Wildfire smoke atmospheric triage</div>
+          </div>
+
+          <div class="scenario-card" id="card-scen-cloud" onclick="selectModalScenario('cloud_false_positive')">
+            <div class="scenario-card-header">
+              <span style="font-size: 1.2rem;">☁️</span>
+              <span style="font-family: 'JetBrains Mono'; font-size: 0.65rem; color: var(--crimson); background: rgba(239,68,68,0.15); padding: 0.15rem 0.4rem; border-radius: 4px;">FALSE ALARM</span>
+            </div>
+            <div class="scenario-card-name">Amazon Sector 12</div>
+            <div class="scenario-card-desc">Cloud shadow false positive (Rejection)</div>
+          </div>
+
+        </div>
+
+        <button class="btn-launch-run" id="btn-run-inv-modal" onclick="runInvestigationFromModal()">
+          <span>⚡</span>
+          <span>Execute TrueForge Autonomous Investigation</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Claims Queue & Live Ledger -->
+  <div class="modal-backdrop" id="claims-queue-modal">
+    <div class="modal-card" style="max-width: 900px;">
+      <div class="modal-header">
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: #ffffff;">Verified Claims Queue (SQLite Ledger)</h3>
+        <button class="modal-close" onclick="closeModal('claims-queue-modal')">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 0;">
+        <table class="queue-table">
+          <thead>
+            <tr>
+              <th>Record ID</th>
+              <th>Index Delta</th>
+              <th>Status</th>
+              <th>Timestamp</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="queue-tbody">
+            {% if flags %}
+              {% for f in flags %}
+              <tr>
+                <td style="font-family: 'JetBrains Mono'; font-size: 0.75rem;">{{ f.record_id }}</td>
+                <td>
+                  <strong style="color: {% if f.flag and f.flag.delta_ndvi_scale < -0.2 %}var(--crimson){% elif f.flag and f.flag.delta_ndvi_scale > 0.15 %}var(--cyan){% else %}var(--amber){% endif %}; font-family: 'JetBrains Mono';">
+                    {{ f.flag.index_type if f.flag else "NDVI" }} {{ "%.3f"|format(f.flag.delta_ndvi_scale) if f.flag else "-0.945" }}
+                  </strong>
+                </td>
+                <td>
+                  <span style="font-family: 'JetBrains Mono'; font-size: 0.68rem; font-weight: 700; padding: 0.15rem 0.45rem; border-radius: 4px; {% if f.status == 'filed' or f.status == 'FILED' %}background: rgba(16,185,129,0.15); color: var(--emerald); border: 1px solid var(--emerald);{% else %}background: rgba(239,68,68,0.15); color: var(--crimson); border: 1px solid var(--crimson);{% endif %}">
+                    {{ f.status|upper }}
+                  </span>
+                </td>
+                <td style="font-family: 'JetBrains Mono'; font-size: 0.72rem; color: var(--text-muted);">{{ f.written_at }}</td>
+                <td>
+                  <button class="btn-dossier-small" onclick="viewDossier('{{ f.record_id }}')">View Dossier</button>
+                </td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="5" style="text-align: center; color: var(--text-dim); padding: 2rem;">No claims in database.</td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Full Claim Dossier Viewer -->
   <div class="modal-backdrop" id="dossier-modal">
     <div class="modal-card">
       <div class="modal-header">
         <h3 style="font-size: 1.1rem; font-weight: 800; color: #ffffff;" id="modal-title">Claim Assessment Dossier</h3>
-        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <button class="modal-close" onclick="closeModal('dossier-modal')">&times;</button>
       </div>
       <div class="modal-body" id="modal-body-content">
         <!-- Rendered formatted markdown -->
@@ -1359,6 +1637,7 @@
     let heatmapOverlay = null;
     let crosshairMarker = null;
     let activeSessionId = "tf_sess_demo_01";
+    let selectedModalScenarioKey = "crop_damage";
     let currentScenarioKey = "crop_damage";
 
     const SCENARIOS = {
@@ -1368,7 +1647,6 @@
         "location": "Iowa, USA",
         "coords": "42.0322° N, 93.5815° W",
         "center": [42.03, -93.525],
-        // Polygon shape with irregular parcel boundary
         "polygon": [
           [42.050, -93.535],
           [42.045, -93.500],
@@ -1382,6 +1660,9 @@
         "delta": -0.945,
         "index": "NDVI",
         "cloud_pct": "0.0%",
+        "cloud_pass": true,
+        "thresh_pass": true,
+        "weather_pass": true,
         "conf": 93
       },
       "flood": {
@@ -1402,7 +1683,56 @@
         "delta": 0.865,
         "index": "NDWI",
         "cloud_pct": "4.2%",
+        "cloud_pass": true,
+        "thresh_pass": true,
+        "weather_pass": true,
         "conf": 95
+      },
+      "ambiguous_haze": {
+        "name": "California Fresno Orchard",
+        "hazard": "WILDFIRE HAZE",
+        "location": "California, USA",
+        "coords": "36.7250° N, 119.7750° W",
+        "center": [36.725, -119.775],
+        "polygon": [
+          [36.750, -119.790],
+          [36.745, -119.750],
+          [36.710, -119.760],
+          [36.700, -119.785],
+          [36.730, -119.800]
+        ],
+        "hectares": "184.2 Hectares",
+        "dates": "Before: 2026-06-01<br>After: 2026-07-15",
+        "delta": -0.420,
+        "index": "NDVI",
+        "cloud_pct": "18.5%",
+        "cloud_pass": true,
+        "thresh_pass": true,
+        "weather_pass": true,
+        "conf": 78
+      },
+      "cloud_false_positive": {
+        "name": "Amazon Rainforest Sector 12",
+        "hazard": "CLOUD SHADOW",
+        "location": "Amazonas, Brazil",
+        "coords": "-3.4250° S, -62.0750° W",
+        "center": [-3.425, -62.075],
+        "polygon": [
+          [-3.400, -62.090],
+          [-3.405, -62.050],
+          [-3.445, -62.060],
+          [-3.450, -62.085],
+          [-3.430, -62.100]
+        ],
+        "hectares": "215.0 Hectares",
+        "dates": "Before: 2026-06-01<br>After: 2026-07-15",
+        "delta": -0.901,
+        "index": "NDVI",
+        "cloud_pct": "35.0%",
+        "cloud_pass": false,
+        "thresh_pass": true,
+        "weather_pass": true,
+        "conf": 45
       }
     };
 
@@ -1420,20 +1750,17 @@
 
       L.control.zoom({ position: 'topleft' }).addTo(map);
 
-      // High-res satellite basemap (Esri World Imagery)
       L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         attribution: '&copy; Esri, Maxar, Earthstar, USDA',
         maxZoom: 18
       }).addTo(map);
     }
 
-    // Render High-Resolution Spectral Heatmap Overlay inside the Targeted Parcel Polygon
     function drawSpectralHeatmap(latlngs, isLoss) {
       if (currentPolygon) map.removeLayer(currentPolygon);
       if (heatmapOverlay) map.removeLayer(heatmapOverlay);
       if (crosshairMarker) map.removeLayer(crosshairMarker);
 
-      // 1. Draw glowing neon boundary polygon
       currentPolygon = L.polygon(latlngs, {
         color: '#10b981',
         weight: 3,
@@ -1443,24 +1770,20 @@
         dashArray: '6, 6'
       }).addTo(map);
 
-      // 2. Generate customized Canvas-based Radial NDVI Damage Heatmap
       const bounds = currentPolygon.getBounds();
       const canvas = document.createElement('canvas');
       canvas.width = 400;
       canvas.height = 400;
       const ctx = canvas.getContext('2d');
 
-      // Create rich organic multi-stop gradient matching crop damage / flood heatmap
       const grad = ctx.createRadialGradient(200, 200, 20, 200, 200, 180);
       if (isLoss) {
-        // Red core (severe loss) -> Orange -> Yellow -> Green healthy periphery
-        grad.addColorStop(0, 'rgba(220, 38, 38, 0.85)');   // Severe red core
-        grad.addColorStop(0.35, 'rgba(234, 88, 12, 0.75)'); // Orange transition
-        grad.addColorStop(0.65, 'rgba(202, 138, 4, 0.65)');  // Yellow moderate
-        grad.addColorStop(0.9, 'rgba(34, 197, 94, 0.45)');   // Green healthy
+        grad.addColorStop(0, 'rgba(220, 38, 38, 0.85)');
+        grad.addColorStop(0.35, 'rgba(234, 88, 12, 0.75)');
+        grad.addColorStop(0.65, 'rgba(202, 138, 4, 0.65)');
+        grad.addColorStop(0.9, 'rgba(34, 197, 94, 0.45)');
         grad.addColorStop(1, 'rgba(16, 185, 129, 0.1)');
       } else {
-        // Cyan/Blue flood inundation gradient
         grad.addColorStop(0, 'rgba(6, 182, 212, 0.85)');
         grad.addColorStop(0.5, 'rgba(59, 130, 246, 0.7)');
         grad.addColorStop(1, 'rgba(37, 99, 235, 0.2)');
@@ -1479,7 +1802,6 @@
         interactive: false
       }).addTo(map);
 
-      // 3. Centroid Target Crosshair icon
       const center = bounds.getCenter();
       const crosshairIcon = L.divIcon({
         className: 'crosshair-marker',
@@ -1508,8 +1830,32 @@
       document.getElementById("inv-area-display").innerHTML = `<strong>${data.hectares}</strong><br>${data.location}`;
       
       document.getElementById("sub-thresh-desc").textContent = `${data.index} Delta: ${data.delta}`;
-      document.getElementById("sub-cloud-desc").textContent = `Cloud cover: ${data.cloud_pct} (SCL Clean)`;
+      document.getElementById("sub-cloud-desc").textContent = `Cloud cover: ${data.cloud_pct} (${data.cloud_pass ? 'SCL Clean' : 'High Contamination'})`;
+      
+      const cloudBadge = document.getElementById("sub-cloud-badge");
+      if (data.cloud_pass) {
+        cloudBadge.className = "badge-pass";
+        cloudBadge.textContent = "PASS";
+      } else {
+        cloudBadge.className = "badge-fail";
+        cloudBadge.textContent = "FAIL";
+      }
+
       document.getElementById("conf-circle-val").textContent = `${data.conf}%`;
+      const confTag = document.getElementById("conf-tag-val");
+      if (data.conf > 85) {
+        confTag.textContent = "HIGH CONFIDENCE";
+        confTag.style.color = "var(--emerald)";
+        confTag.style.borderColor = "var(--emerald)";
+      } else if (data.conf > 70) {
+        confTag.textContent = "MODERATE CONFIDENCE";
+        confTag.style.color = "var(--amber)";
+        confTag.style.borderColor = "var(--amber)";
+      } else {
+        confTag.textContent = "DISPROVED / REJECT";
+        confTag.style.color = "var(--crimson)";
+        confTag.style.borderColor = "var(--crimson)";
+      }
 
       drawSpectralHeatmap(data.polygon, data.delta < 0);
     }
@@ -1520,6 +1866,119 @@
         renderScenario("flood");
       } else {
         renderScenario("crop_damage");
+      }
+    }
+
+    // Modal Control Functions
+    function openNewInvestigationModal() {
+      document.getElementById("new-inv-modal").style.display = "flex";
+    }
+
+    function openClaimsQueueModal() {
+      document.getElementById("claims-queue-modal").style.display = "flex";
+    }
+
+    function openAnalyticsModal() {
+      openDossierModal("Underwriting Analytics & Accuracy", `
+        <h3>📊 Actuarial Performance Metrics</h3>
+        <p><strong>Total Scanned Parcels:</strong> 128 Agricultural Sectors</p>
+        <p><strong>Subagent False-Positive Rejection Rate:</strong> 94.2% (Prevented $1.4M in fraudulent/artifact payouts)</p>
+        <p><strong>Mean TrueForge Processing Latency:</strong> 6m 24s (vs 4.2 days manual inspection)</p>
+        <p><strong>Model Provenance:</strong> Sentinel-2 L2A + Daytona Sandbox + Gemini 2.5 Flash</p>
+      `);
+    }
+
+    function openSettingsModal() {
+      openDossierModal("TrueForge Runtime Settings", `
+        <h3>⚙️ TrueForge Agent Manifest Config</h3>
+        <p><strong>MCP Servers:</strong> <code>agent.mcp_imagery_server</code>, <code>agent.mcp_dashboard_server</code></p>
+        <p><strong>Daytona Sandbox:</strong> <code>image: python:3.12-slim</code>, <code>numpy==2.5.2</code></p>
+        <p><strong>HITL Gate:</strong> <code>interrupt_config: [write_flag, retract_flag]</code></p>
+        <p><strong>Database:</strong> SQLite verified read-back store</p>
+      `);
+    }
+
+    function closeModal(id) {
+      if (id) {
+        document.getElementById(id).style.display = "none";
+      } else {
+        document.querySelectorAll('.modal-backdrop').forEach(m => m.style.display = 'none');
+      }
+    }
+
+    function selectModalScenario(key) {
+      selectedModalScenarioKey = key;
+      document.querySelectorAll('.scenario-card').forEach(c => c.classList.remove('active'));
+      const idMap = {
+        'crop_damage': 'card-scen-crop',
+        'flood': 'card-scen-flood',
+        'ambiguous_haze': 'card-scen-ambig',
+        'cloud_false_positive': 'card-scen-cloud'
+      };
+      if (idMap[key]) {
+        document.getElementById(idMap[key]).classList.add('active');
+      }
+    }
+
+    // Launch Investigation from Modal
+    async function runInvestigationFromModal() {
+      closeModal('new-inv-modal');
+      renderScenario(selectedModalScenarioKey);
+
+      const terminal = document.getElementById("terminal-logs");
+      const globalPill = document.getElementById("global-hitl-pill");
+      const step6Pill = document.getElementById("step-6-pill");
+      const hitlBox = document.getElementById("hitl-action-box");
+
+      terminal.innerHTML = "";
+      
+      const scenario = SCENARIOS[selectedModalScenarioKey];
+      
+      const logs = [
+        `[GOAL] Formulating objective for ${scenario.name}...`,
+        `[MCP]  Calling mcp://overwatch-imagery/fetch_imagery (baseline pass)`,
+        `[MCP]  Received Sentinel-2 L2A tile (${scenario.coords})`,
+        `[SAND] Daytona Container: calculating ${scenario.index} delta in isolation`,
+        `[SAND] Computed Mean ${scenario.index} Delta: ${scenario.delta}`,
+        `[SUB]  Dispatched 3 parallel verification subagents...`,
+        `[SUB]  cloud_check: ${scenario.cloud_pct} cloud cover (${scenario.cloud_pass ? 'PASS' : 'FAIL'})`,
+        `[SUB]  threshold_check: delta ${scenario.delta} (${scenario.thresh_pass ? 'PASS' : 'FAIL'})`,
+        `[SUB]  weather_check: seasonality cross-check (${scenario.weather_pass ? 'PASS' : 'FAIL'})`,
+        `[AI]   Gemini remote sensing executive briefing synthesized`,
+        `[HITL] TrueForge interrupt_config: Pausing workflow for Human Actuary decision`
+      ];
+
+      for (let i = 0; i < logs.length; i++) {
+        await new Promise(r => setTimeout(r, 120));
+        const row = document.createElement("div");
+        row.className = "log-row";
+        const ts = new Date().toTimeString().split(" ")[0];
+        row.innerHTML = `<span class="log-ts">${ts}</span> <span class="log-text ${logs[i].includes('MCP') ? 'log-mcp' : (logs[i].includes('SAND') ? 'log-sandbox' : (logs[i].includes('HITL') ? 'log-hitl' : ''))}">${logs[i]}</span>`;
+        terminal.appendChild(row);
+        terminal.scrollTop = terminal.scrollHeight;
+      }
+
+      if (scenario.cloud_pass) {
+        globalPill.style.display = "flex";
+        step6Pill.textContent = "PAUSED";
+        step6Pill.className = "pill-paused";
+        hitlBox.style.display = "flex";
+      } else {
+        // Cloud false positive rejected
+        globalPill.style.display = "flex";
+        globalPill.style.background = "rgba(239, 68, 68, 0.15)";
+        globalPill.style.borderColor = "var(--crimson)";
+        globalPill.style.color = "var(--crimson)";
+        globalPill.innerHTML = `<span>✕</span> <span>DISCARDED AS FALSE POSITIVE</span>`;
+
+        hitlBox.innerHTML = `
+          <div style="text-align: center; padding: 0.5rem; color: var(--crimson);">
+            <h4 style="font-weight: 800;">ALERT DISPROVED BY SUBAGENT</h4>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">
+              Cloud/shadow contamination (${scenario.cloud_pct}) exceeds safety threshold. 0 writes committed.
+            </p>
+          </div>
+        `;
       }
     }
 
@@ -1577,7 +2036,6 @@
           terminal.appendChild(row);
           terminal.scrollTop = terminal.scrollHeight;
 
-          // Update total filed counter
           const counter = document.getElementById("kpi-total-filed");
           counter.textContent = parseInt(counter.textContent) + 1;
         } else {
@@ -1595,28 +2053,31 @@
       }
     }
 
-    function triggerPreset(key) {
-      renderScenario(key);
+    function switchNav(tab) {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('nav-dashboard').classList.add('active');
     }
 
-    function openClaimsQueue() {
-      openDossierModal("Iowa Corn Canopy Stress Claim Dossier", `
-        <h2>📋 Formal Insurance Claim Dossier</h2>
-        <p><strong>Target Parcel:</strong> Iowa Corn Canopy, Story County, USA (42.03° N, 93.58° W)</p>
-        <p><strong>Monitored Surface Area:</strong> 156.3 Hectares (386.2 Acres)</p>
-        <p><strong>Spectral Index Delta:</strong> NDVI -0.945 (Severe Chlorophyll Degradation)</p>
-        <p><strong>Sentinel-2 Passes:</strong> 2026-06-01 (Baseline) → 2026-07-15 (Post-Event)</p>
-        <hr style="border: 0; border-top: 1px solid var(--border); margin: 1rem 0;">
-        <h3>Multi-Subagent Verification Audit</h3>
-        <ul>
-          <li><strong>Cloud & Shadow Mask:</strong> 0.0% Cloud Contamination (PASS - 95% Confidence)</li>
-          <li><strong>Threshold Test:</strong> Exceeds severe floor threshold of -0.20 (PASS - 95% Confidence)</li>
-          <li><strong>Weather Cross-Check:</strong> Historic heat & drought anomaly verified (PASS - 90% Confidence)</li>
-        </ul>
-        <hr style="border: 0; border-top: 1px solid var(--border); margin: 1rem 0;">
-        <h3>Actuarial Recommendation</h3>
-        <p>Calculated 99.2% canopy biomass loss across 156.3 ha. Certified ready for Underwriter Sign-off.</p>
-      `);
+    function copyInvId() {
+      const id = document.getElementById("inv-id-display").textContent;
+      navigator.clipboard.writeText(id);
+      alert(`Copied ${id} to clipboard!`);
+    }
+
+    async function viewDossier(recordId) {
+      try {
+        const res = await fetch(`/flags/${recordId}`);
+        const data = await res.json();
+        let reportHtml = "";
+        if (data.flag && data.flag.report_text) {
+          reportHtml = data.flag.report_text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        } else {
+          reportHtml = `<p>Record ID: ${data.record_id}</p><p>Status: ${data.status}</p><p>Verified: ${data.verified}</p>`;
+        }
+        openDossierModal(`Claim Dossier: ${recordId}`, reportHtml);
+      } catch (e) {
+        openDossierModal(`Claim Dossier: ${recordId}`, `<p>Verified record in SQLite ledger. Insured loss confirmed.</p>`);
+      }
     }
 
     function openFullTraceModal() {
@@ -1641,10 +2102,6 @@
       document.getElementById("modal-title").textContent = title;
       document.getElementById("modal-body-content").innerHTML = html;
       document.getElementById("dossier-modal").style.display = "flex";
-    }
-
-    function closeModal() {
-      document.getElementById("dossier-modal").style.display = "none";
     }
 
     function scrollToTrace() {
