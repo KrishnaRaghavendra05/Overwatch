@@ -1,0 +1,46 @@
+[config]
+model = "gpt-4o"
+fallback_models = ["gpt-4o-mini"]
+response_language = "en-US"
+
+[pr_reviewer]
+require_focused = true
+require_score_review = true
+require_tests_review = true
+require_security_review = true
+num_code_suggestions = 4
+extra_instructions = """
+Repository Rules & Domain Guidance:
+1. Architecture Purity: Files in `core/` MUST be pure Python and numpy only. They must NEVER import `agent/`, `dashboard/`, `trueforge`, `mcp`, `fastapi`, `uvicorn`, `pydantic`, `httpx`, `requests`, `aiohttp`, or `dotenv`. Flag any violations immediately.
+2. Units & Scale Discipline:
+   - Optical reflectance data is often scaled by 10,000 (0-10000) rather than 0.0-1.0. Verify reflectance scaling before computing vegetation/water indices.
+   - NDVI and NDWI output ranges must strictly stay in [-1.0, 1.0].
+   - Cloud mask fields must explicitly define units (boolean mask vs 0-100 percentage).
+3. Human-Approval Gating: Report writes or retractions into `dashboard/` must strictly be gated behind human approval. Never allow writing to the dashboard directly from subagents or unapproved steps.
+4. Boundaries & Models: All external I/O (imagery APIs, dashboard payloads) must use Pydantic models in `agent/models/`.
+5. Logging: Use Python standard `logging`, never bare `print()` statements.
+6. Secrets: Never hardcode credentials, tokens, or API keys in source files. All secrets belong in `.env`.
+7. Style: Keep feedback concise, punchy, and actionable.
+"""
+
+[pr_description]
+publish_labels = true
+add_custom_labels = ["qodo-reviewed"]
+extra_instructions = """
+Keep the PR summary concise, structured, and punchy. Clearly state whether changes touch `core/`, `agent/`, or `dashboard/`.
+"""
+
+[pr_code_suggestions]
+num_code_suggestions = 4
+focus_only_on_problems = true
+extra_instructions = """
+Prioritize:
+- Fixing any accidental impurity imports in `core/`.
+- Scale/unit consistency in remote sensing index calculations.
+- Handling rate limits and ensuring cache usage for imagery API fetches.
+"""
+
+[pr_test]
+extra_instructions = """
+Generate pytest unit tests matching pytest 9+ and Python 3.12 conventions. Ensure tests for `core/` do not import banned namespaces.
+"""

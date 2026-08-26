@@ -63,6 +63,25 @@ ruff check .
 
 ---
 
+## Qodo Integration
+
+This repository is configured with **Qodo Merge (PR-Agent)** and **Qodo Cover** via GitHub Actions:
+
+- **`.pr_agent.toml`**: Custom rules enforcing `core/` architectural purity, satellite index scale boundaries (`[-1.0, 1.0]`), human-gated approval checks, and Pydantic boundary validation.
+- **`.github/workflows/pr_agent.yml`**: Runs automated code reviews on pull requests and handles PR comment commands (`/review`, `/describe`, `/improve`, `/ask`, `/test`).
+- **`.github/workflows/qodo_cover.yml`**: Automated test generation and coverage expansion.
+
+```bash
+# Available PR Comment Commands
+/review       # Request automated Qodo code review
+/describe     # Auto-generate PR summary and labels
+/improve      # Request targeted code improvements
+/ask <query>  # Ask questions about PR changes
+/test         # Generate pytest unit tests for PR diff
+```
+
+---
+
 ## Demo
 
 <!-- TODO Phase 6: embed demo video link here -->

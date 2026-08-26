@@ -1,0 +1,37 @@
+name: Qodo Cover
+
+on:
+  pull_request:
+    branches: ["**"]
+  workflow_dispatch:
+    inputs:
+      desired_coverage:
+        description: "Target coverage percentage"
+        required: false
+        default: "80"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  qodo-cover:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Run Qodo Cover
+        uses: qodo-ai/qodo-ci/qodo-cover-pr@main
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_KEY || secrets.OPENAI_API_KEY || secrets.QODO_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
