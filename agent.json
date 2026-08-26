@@ -1,0 +1,57 @@
+{
+  "name": "overwatch-geospatial-agent",
+  "description": "Satellite land-cover change detection agent with human-gated report filing. Monitors crop stress, flooding, and deforestation by comparing Sentinel-2 imagery across two dates, runs verification subagents, and gates every consequential action behind human approval.",
+  "model": "google/gemini-2.5-flash",
+  "instructions": "You are the Overwatch geospatial verification agent. When a user asks about land-cover change (crop stress, flooding, deforestation) in a geographic area, you: (1) fetch satellite imagery via the fetch_imagery MCP tool, (2) compute NDVI/NDWI delta in the Daytona sandbox, (3) run three parallel verification subagents (cloud check, threshold check, weather cross-check), (4) draft a report if verified, (5) halt for human approval before filing. Never file or retract a claim without explicit human sign-off.",
+
+  "enable_tools": [
+    "mcp://overwatch-imagery/fetch_imagery",
+    "mcp://overwatch-imagery/list_cached_tiles",
+    "mcp://overwatch-dashboard/read_flag",
+    "mcp://overwatch-dashboard/list_flags",
+    "mcp://overwatch-dashboard/write_flag",
+    "mcp://overwatch-dashboard/retract_flag"
+  ],
+
+  "interrupt_config": {
+    "mcp://overwatch-dashboard/write_flag": {
+      "require_approval": true,
+      "approval_message": "⚠️ CONSEQUENTIAL ACTION: This will file an official damage assessment record into the live Claims Dashboard. Review the draft report above and approve or reject."
+    },
+    "mcp://overwatch-dashboard/retract_flag": {
+      "require_approval": true,
+      "approval_message": "⚠️ CONSEQUENTIAL ACTION: This will mark an existing verified claim as RETRACTED/VOID in the live database. Confirm rollback."
+    }
+  },
+
+  "preload": [
+    "mcp://overwatch-imagery/fetch_imagery"
+  ],
+
+  "mcp_servers": {
+    "overwatch-imagery": {
+      "command": "python",
+      "args": ["-m", "agent.mcp_imagery_server"],
+      "env": {
+        "IMAGERY_PROVIDER_URL": "${IMAGERY_PROVIDER_URL}",
+        "IMAGERY_PROVIDER_KEY": "${IMAGERY_PROVIDER_KEY}",
+        "CACHE_DIR": "${CACHE_DIR}"
+      }
+    },
+    "overwatch-dashboard": {
+      "command": "python",
+      "args": ["-m", "agent.mcp_dashboard_server"],
+      "env": {
+        "DASHBOARD_DB_PATH": "${DASHBOARD_DB_PATH}"
+      }
+    }
+  },
+
+  "sandbox": {
+    "provider": "daytona",
+    "image": "python:3.12-slim",
+    "packages": ["numpy==2.5.2"],
+    "allowed_modules": ["numpy", "core"],
+    "timeout_seconds": 30
+  }
+}

@@ -27,11 +27,10 @@ class ImageryRequest(BaseModel):
 
 # raw spectral bands from provider
 class SpectralBands(BaseModel):
-    # TODO Phase 1: confirm band naming convention with chosen provider
-    # TODO Phase 1: confirm reflectance scale — 0-1 or 0-10000
-    nir_raw: list[list[float]]  # near-infrared band, raw provider scale
-    red_raw: list[list[float]]  # red band, raw provider scale
-    green_raw: list[list[float]]  # green band, raw provider scale
+    nir_raw: list[list[float]]  # near-infrared band, 0-1 or 0-10000 scale
+    red_raw: list[list[float]]  # red band, 0-1 or 0-10000 scale
+    green_raw: list[list[float]]  # green band, 0-1 or 0-10000 scale
+    scl_raw: list[list[int]] | None = None  # Sentinel-2 SCL (0-11)
 
 
 # full imagery response from provider or cache
@@ -40,6 +39,5 @@ class ImageryResponse(BaseModel):
     acquired: datetime
     area: BoundingBox
     bands: SpectralBands
-    # TODO Phase 1: confirm field name and unit from live provider response
-    # could be percentage (0-100) or fraction (0-1) — name assumes percentage
     cloud_cover_pct_0_100: float
+    description: str | None = None
