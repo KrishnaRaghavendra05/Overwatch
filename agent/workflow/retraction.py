@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime, timezone
 
 from agent.models.dashboard import DashboardReadResponse
 from agent.workflow.approval_gate import execute_approved_write
@@ -27,7 +26,7 @@ def propose_retraction(
         "    as RETRACTED / VOID in the live database.",
         "============================================================",
     ]
-    print("\n".join(banner))
+    logger.info("\n%s", "\n".join(banner))
 
     if interactive:
         decision = (

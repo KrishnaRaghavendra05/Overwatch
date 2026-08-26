@@ -46,7 +46,7 @@ def handle_ambiguity_triage(
         ]
     )
 
-    print("\n".join(triage_prompt))
+    logger.info("\n%s", "\n".join(triage_prompt))
 
     if interactive:
         choice = input("Enter choice (1, 2, or 3) [default: 1]: ").strip()

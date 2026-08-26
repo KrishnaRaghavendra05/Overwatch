@@ -31,7 +31,7 @@ def present_and_await_approval(
         "    into the live Claims & Verification Dashboard.",
         "============================================================",
     ]
-    print("\n".join(banner))
+    logger.info("\n%s", "\n".join(banner))
 
     if interactive:
         decision = (

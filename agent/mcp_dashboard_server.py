@@ -11,13 +11,10 @@ import logging
 import sys
 from datetime import datetime
 
-from agent.models.dashboard import (
-    ChangeFlag,
-    DashboardWritePayload,
-)
+from agent.models.dashboard import ChangeFlag
 from agent.models.imagery import BoundingBox
+from agent.workflow.approval_gate import execute_approved_write
 from dashboard.read import list_flags, read_flag
-from dashboard.write import write_flag
 
 logger = logging.getLogger(__name__)
 
@@ -115,13 +112,7 @@ def handle_write_flag(params: dict) -> dict:
         severity=params["severity"],
         report_text=params["report_text"],
     )
-    payload = DashboardWritePayload(
-        flag=flag,
-        approved_by=params["approved_by"],
-        approved_at=datetime.now(),
-        action="file",
-    )
-    resp = write_flag(payload)
+    resp = execute_approved_write(flag, approver=params["approved_by"])
     return resp.model_dump(mode="json")
 
 
@@ -133,13 +124,12 @@ def handle_retract_flag(params: dict) -> dict:
     if existing.flag is None:
         return {"error": "Cannot reconstruct flag from DB"}
 
-    payload = DashboardWritePayload(
+    resp = execute_approved_write(
         flag=existing.flag,
-        approved_by=params["approved_by"],
-        approved_at=datetime.now(),
+        approver=params["approved_by"],
         action="retract",
+        record_id=params["record_id"],
     )
-    resp = write_flag(payload)
     return resp.model_dump(mode="json")
 
 
