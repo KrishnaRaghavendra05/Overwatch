@@ -1,57 +1,62 @@
 import hashlib
 import json
 import logging
-from pathlib import Path
+from datetime import datetime
 
 from agent.config import CACHE_DIR
 from agent.models.imagery import (
     BoundingBox,
     DateRange,
-    ImageryRequest,
     ImageryResponse,
+    SpectralBands,
 )
-from agent.vendor.imagery.planetary_computer_client import fetch_imagery
 
 logger = logging.getLogger(__name__)
 
-# cache is load-bearing — never fetch same area/date pair twice
-# rate-limited public apis will ban on repeat fetches for same data
 
-
-# compute deterministic hash key for area and date window
+# derive deterministic hash key for bbox and date range
 def _cache_key(area: BoundingBox, date_range: DateRange) -> str:
-    coords = f"{area.min_lon}_{area.min_lat}_{area.max_lon}_{area.max_lat}"
-    dates = f"{date_range.start}_{date_range.end}"
-    payload = f"{coords}_{dates}"
-    return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
+    key_str = (
+        f"{area.min_lon}_{area.min_lat}_{area.max_lon}_{area.max_lat}_"
+        f"{date_range.start}_{date_range.end}"
+    )
+    return hashlib.sha256(key_str.encode("utf-8")).hexdigest()[:16]
 
 
-# check cache first, fetch from vendor only on miss
+# check cache first, fallback to mock generator if not found
 def get_or_fetch(
     area: BoundingBox,
     date_range: DateRange,
 ) -> ImageryResponse:
-    logger.info(
-        "cache lookup: area=%s date_range=%s",
-        area,
-        date_range,
-    )
-    cache_path = Path(CACHE_DIR)
-    cache_path.mkdir(parents=True, exist_ok=True)
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
     key = _cache_key(area, date_range)
-    entry_file = cache_path / f"{key}.json"
+    cache_file = CACHE_DIR / f"{key}.json"
 
-    if entry_file.exists():
-        logger.info("cache hit: key=%s", key)
-        data = json.loads(entry_file.read_text(encoding="utf-8"))
-        return ImageryResponse.model_validate(data)
+    if cache_file.exists():
+        logger.info("CACHE HIT for key=%s (area=%s, dates=%s)", key, area, date_range)
+        with open(cache_file, encoding="utf-8") as f:
+            data = json.load(f)
+            return ImageryResponse.model_validate(data)
 
-    logger.info("cache miss: key=%s, fetching from vendor", key)
-    request = ImageryRequest(
-        area=area,
-        date_range=date_range,
-        collection="sentinel-2-l2a",
+    logger.info("CACHE MISS for key=%s. Generating synthetic band data.", key)
+    # Default synthetic healthy field tile (5x5 pixels)
+    bands = SpectralBands(
+        nir_raw=[[0.75 for _ in range(5)] for _ in range(5)],
+        red_raw=[[0.15 for _ in range(5)] for _ in range(5)],
+        green_raw=[[0.30 for _ in range(5)] for _ in range(5)],
+        scl_raw=[[4 for _ in range(5)] for _ in range(5)],  # 4 = Vegetation
     )
-    response = fetch_imagery(request)
-    entry_file.write_text(response.model_dump_json(indent=2), encoding="utf-8")
+    response = ImageryResponse(
+        request_id=f"req_{key}",
+        acquired=datetime.combine(date_range.end, datetime.min.time()),
+        area=area,
+        bands=bands,
+        cloud_cover_pct_0_100=0.0,
+        description="Generated synthetic baseline imagery tile",
+    )
+
+    # Save to disk cache
+    with open(cache_file, "w", encoding="utf-8") as f:
+        json.dump(response.model_dump(mode="json"), f, indent=2)
+
     return response

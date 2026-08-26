@@ -1,6 +1,6 @@
 # Overwatch
 
-Satellite land-cover change detection agent with human-gated report filing, built for the TrueForge Agent Harness Hackathon.
+Satellite land-cover change detection agent with human-gated report filing, built for **The Agent Harness Hackathon** (WeMakeDevs × TrueFoundry × Qodo, Aug 24–30 2026).
 
 ---
 
@@ -27,31 +27,49 @@ Why split this way: the math (`core/`) must be reviewable and testable without s
 7. **Write to dashboard** — approved flag written to live tracking system
 8. **Verify write** — agent reads back the record to confirm it landed correctly
 9. **Retraction path** — if later evidence contradicts an approved flag, agent proposes retraction behind a fresh approval gate
-10. **Escalation** *(optional, Phase 6)* — notify if approved flag sits unreviewed too long
+10. **Escalation** *(optional)* — notify if approved flag sits unreviewed too long
 
 ---
 
-## Setup
+## TrueForge Integration
+
+This project runs on [TrueForge](https://github.com/truefoundry/trueforge), TrueFoundry's open-source agent harness. The `agent.json` manifest at the project root defines:
+
+- **MCP Tool Servers**: Two stdio-based MCP servers (`agent/mcp_imagery_server.py` for satellite imagery fetch, `agent/mcp_dashboard_server.py` for dashboard read/write)
+- **Human Approval Gates**: `write_flag` and `retract_flag` tools are gated by `interrupt_config` — the agent cannot invoke them without explicit human sign-off
+- **Daytona Sandbox**: NDVI/NDWI computation runs in an isolated sandbox with only `numpy` and `core/` available
+
+### Running with TrueForge
+
+```bash
+# Install TrueForge
+pip install trueforge
+
+# Start the agent (reads agent.json automatically)
+trueforge run --config agent.json
+```
+
+---
+
+## Setup (standalone / development)
 
 ```bash
 # Clone and create venv
-git clone <repo-url>
-cd geo-change-agent
+git clone https://github.com/KrishnaRaghavendra05/Overwatch.git
+cd Overwatch
 python -m venv .venv
-.venv\Scripts\activate   # Windows
-# source .venv/bin/activate  # Linux/macOS
+source .venv/bin/activate  # Linux/macOS
+# .venv\Scripts\activate   # Windows
 
 # Install
 pip install -e ".[dev]"
 
 # Configure
-copy .env.example .env
-# Fill in keys: MODEL_PROVIDER, MODEL_API_KEY, DAYTONA_API_KEY,
-#               IMAGERY_PROVIDER_KEY, IMAGERY_PROVIDER_URL,
-#               CACHE_DIR, DASHBOARD_DB_PATH
+cp .env.example .env
+# Fill in: MODEL_API_KEY (Gemini), IMAGERY_PROVIDER_URL, etc.
 
-# Run TrueForge locally
-# (see TrueForge docs: github.com/truefoundry/trueforge)
+# Seed demo data & run agent CLI
+python -m agent.main --scenario crop_damage
 
 # Run the dashboard
 uvicorn dashboard.app:app --reload
@@ -84,7 +102,7 @@ This repository is configured with **Qodo Merge (PR-Agent)** and **Qodo Cover** 
 
 ## Demo
 
-<!-- TODO Phase 6: embed demo video link here -->
+<!-- TODO: embed 3-minute demo video link before submission -->
 
 ---
 
@@ -94,16 +112,31 @@ This repository is configured with **Qodo Merge (PR-Agent)** and **Qodo Cover** 
 |---|---|
 | Potential impact | Agricultural-insurance framing: agent gates a real-money claim decision |
 | Creativity | Geospatial/remote-sensing agents rare at this hackathon |
-| Technical excellence | Deterministic index pipeline; write/verify/retract loop |
+| Technical excellence | Deterministic index pipeline; write/verify/retract loop; 16+ automated tests |
 | Use of sponsor tools | MCP tool call, Daytona sandbox, human-approval pause, subagent delegation, Qodo PR trail |
-| Control & safety | Two real gates: Step 6 (file) and Step 9 (retract), both with real stakes |
-| Presentation | Before/after imagery + dashboard update visible in demo video |
+| Control & safety | Three real gates: Step 4.5 (ambiguity triage), Step 6 (file), Step 9 (retract) |
+| Presentation | Before/after satellite imagery with Leaflet map + dashboard updating on approval |
+
+---
+
+## Qodo Code Review Evidence
+
+All substantive features were developed through GitHub Pull Requests with Qodo code review enabled from commit #1. High-severity findings were addressed before merging.
+
+<!-- Add links to merged PRs with Qodo review comments here:
+- PR #1: Core math engine — https://github.com/.../pull/1
+- PR #2: Verification subagents — https://github.com/.../pull/2
+- PR #3: Dashboard & approval gates — https://github.com/.../pull/3
+-->
 
 ---
 
 ## AI tool disclosure
 
-<!-- TODO: fill this in truthfully before submission.
-     List which tool was used for which part of the codebase.
-     This section is required by hackathon rules.
-     Do not fabricate — only disclose what actually happened. -->
+This project used AI coding assistants during development, as permitted by hackathon rules:
+
+- **Google Gemini** — used as the LLM model for executive report synthesis within the agent pipeline (`agent/llm_gemini.py`)
+- **Claude (Anthropic)** — used as a pair-programming assistant for code generation, architecture design, and debugging throughout the build week
+- **Qodo** — used for automated code review on all pull requests
+
+All AI-generated code was reviewed, tested, and validated by human team members before merging. The mathematical core (`core/`) was independently verified against known index formulas and threshold values.

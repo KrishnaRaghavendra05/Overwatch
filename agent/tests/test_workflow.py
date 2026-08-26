@@ -1,85 +1,120 @@
-from datetime import datetime, timezone
+from datetime import date
 
-import pytest
-
-from agent.models.imagery import (
-    BoundingBox,
-    DateRange,
-    ImageryResponse,
-    SpectralBands,
-)
-from agent.subagents.cloud_check import run_cloud_check
-from agent.subagents.threshold_check import run_threshold_check
-from agent.subagents.weather_check import run_weather_check
+from agent.models.imagery import BoundingBox, DateRange
+from agent.services.cache import get_or_fetch
+from agent.workflow.ambiguity_gate import TriageDecision, handle_ambiguity_triage
 from agent.workflow.approval_gate import (
     execute_approved_write,
     present_and_await_approval,
 )
-from agent.workflow.draft_report import draft_report
-from agent.workflow.retraction import (
-    execute_approved_retraction,
-    propose_retraction,
-)
-from dashboard.db import init_db
+from agent.workflow.draft_report import draft_report, run_verification_suite
+from agent.workflow.retraction import execute_approved_retraction, propose_retraction
+from dashboard.read import read_flag
+from scripts.seed_sample_data import seed
 
 
-@pytest.fixture(autouse=True)
-def setup_test_db(tmp_path, monkeypatch):
-    test_db = tmp_path / "test_workflow.db"
-    monkeypatch.setattr("dashboard.db.DASHBOARD_DB_PATH", test_db)
-    monkeypatch.setattr("agent.config.DASHBOARD_DB_PATH", test_db)
-    init_db()
+def setup_module() -> None:
+    # Ensure cached sample datasets are seeded before tests run
+    seed(42)
 
 
-def test_subagent_verifications():
-    area = BoundingBox(min_lon=10.0, min_lat=20.0, max_lon=10.5, max_lat=20.5)
-    img_resp_clean = ImageryResponse(
-        request_id="test-clean",
-        acquired=datetime.now(timezone.utc),
-        area=area,
-        bands=SpectralBands(
-            nir_raw=[[0.8, 0.8]], red_raw=[[0.2, 0.2]], green_raw=[[0.3, 0.3]]
-        ),
-        cloud_cover_pct_0_100=5.0,
-    )
-    img_resp_cloudy = ImageryResponse(
-        request_id="test-cloudy",
-        acquired=datetime.now(timezone.utc),
-        area=area,
-        bands=SpectralBands(
-            nir_raw=[[0.8, 0.8]], red_raw=[[0.2, 0.2]], green_raw=[[0.3, 0.3]]
-        ),
-        cloud_cover_pct_0_100=65.0,
-    )
+def test_scenario_1_crop_damage_end_to_end() -> None:
+    """Scenario 1: True positive crop damage passes all 3 subagents and writes to DB."""
+    area = BoundingBox(min_lon=-93.55, min_lat=42.01, max_lon=-93.50, max_lat=42.05)
+    d_before = DateRange(start=date(2026, 6, 1), end=date(2026, 6, 2))
+    d_after = DateRange(start=date(2026, 7, 15), end=date(2026, 7, 16))
 
-    assert run_cloud_check(img_resp_clean) is True
-    assert run_cloud_check(img_resp_cloudy) is False
+    before_resp = get_or_fetch(area, d_before)
+    after_resp = get_or_fetch(area, d_after)
 
-    assert run_threshold_check(-0.3) is True
-    assert run_threshold_check(-0.02) is False
+    # 1. Run 3 subagents
+    mean_delta, summary = run_verification_suite(before_resp, after_resp, d_after)
+    assert summary.all_passed is True
+    assert summary.is_ambiguous is False
+    assert summary.recommended_action == "PROCEED_TO_DRAFT"
+    assert mean_delta < -0.20
 
-    dr = DateRange(start=datetime.now().date(), end=datetime.now().date())
-    assert run_weather_check(area, dr) is True
-
-
-def test_end_to_end_approval_and_retraction():
-    area = BoundingBox(min_lon=10.0, min_lat=20.0, max_lon=10.5, max_lat=20.5)
-    flag = draft_report(area=area, delta_ndvi_scale=-0.35, checks_passed=True)
+    # 2. Draft report
+    flag = draft_report(area, mean_delta, summary, before_resp, after_resp)
     assert flag.severity == "severe"
 
-    approved = present_and_await_approval(flag)
+    # 3. Human Approval Gate
+    approved = present_and_await_approval(flag, interactive=False)
     assert approved is True
 
-    write_resp = execute_approved_write(flag, approver="inspector_alice")
+    # 4. Write & Read-back Verification
+    write_resp = execute_approved_write(flag, approver="Kaamil Hifzaan")
     assert write_resp.verified is True
-    assert write_resp.status == "filed"
+    assert write_resp.status == "FILED"
 
-    # Retraction flow
-    proposed = propose_retraction(write_resp.record_id, reason="seasonal shadow")
-    assert proposed is True
+    # Read back directly to verify state
+    db_record = read_flag(write_resp.record_id)
+    assert db_record is not None
+    assert db_record.status == "FILED"
 
-    retract_resp = execute_approved_retraction(
-        write_resp.record_id, approver="inspector_alice"
+
+def test_scenario_2_cloud_false_positive_rejected() -> None:
+    """Scenario 2: Cloud shadow artifact is rejected by Cloud Subagent."""
+    area = BoundingBox(min_lon=-62.10, min_lat=-3.45, max_lon=-62.05, max_lat=-3.40)
+    d_before = DateRange(start=date(2026, 6, 1), end=date(2026, 6, 2))
+    d_after = DateRange(start=date(2026, 7, 15), end=date(2026, 7, 16))
+
+    before_resp = get_or_fetch(area, d_before)
+    after_resp = get_or_fetch(area, d_after)
+
+    _, summary = run_verification_suite(before_resp, after_resp, d_after)
+    assert summary.all_passed is False
+    assert summary.recommended_action == "DISCARD_FALSE_ALARM"
+
+
+def test_scenario_3_ambiguity_triage_flow() -> None:
+    """Scenario 3: Thin haze triggers Ambiguity Triage Gate."""
+    area = BoundingBox(min_lon=-119.80, min_lat=36.70, max_lon=-119.75, max_lat=36.75)
+    d_before = DateRange(start=date(2026, 6, 1), end=date(2026, 6, 2))
+    d_after = DateRange(start=date(2026, 7, 15), end=date(2026, 7, 16))
+
+    before_resp = get_or_fetch(area, d_before)
+    after_resp = get_or_fetch(area, d_after)
+
+    _, summary = run_verification_suite(before_resp, after_resp, d_after)
+    assert summary.is_ambiguous is True
+    assert summary.recommended_action == "AMBIGUITY_TRIAGE"
+
+    # Human handles triage
+    decision = handle_ambiguity_triage(
+        summary,
+        default_choice=TriageDecision.ACCEPT_AS_DAMAGE,
+        interactive=False,
     )
-    assert retract_resp.verified is True
-    assert retract_resp.status == "retracted"
+    assert decision == TriageDecision.ACCEPT_AS_DAMAGE
+
+
+def test_retraction_lifecycle() -> None:
+    """Scenario: Previously filed record is retracted via human gate."""
+    area = BoundingBox(min_lon=-93.55, min_lat=42.01, max_lon=-93.50, max_lat=42.05)
+    d_before = DateRange(start=date(2026, 6, 1), end=date(2026, 6, 2))
+    d_after = DateRange(start=date(2026, 7, 15), end=date(2026, 7, 16))
+
+    before_resp = get_or_fetch(area, d_before)
+    after_resp = get_or_fetch(area, d_after)
+    mean_delta, summary = run_verification_suite(before_resp, after_resp, d_after)
+    flag = draft_report(area, mean_delta, summary, before_resp, after_resp)
+
+    # File first
+    write_resp = execute_approved_write(flag, approver="Kaamil Hifzaan")
+    record_id = write_resp.record_id
+
+    # Now propose and execute retraction
+    propose_ok = propose_retraction(
+        record_id,
+        reason="Follow-up clean tile confirmed transient sensor artifact",
+        interactive=False,
+    )
+    assert propose_ok is True
+
+    retract_resp = execute_approved_retraction(record_id, approver="Kaamil Hifzaan")
+    assert retract_resp.status == "RETRACTED"
+
+    db_record = read_flag(record_id)
+    assert db_record is not None
+    assert db_record.status == "RETRACTED"

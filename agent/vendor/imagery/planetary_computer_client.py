@@ -1,8 +1,15 @@
+"""Planetary Computer STAC client.
+
+Searches the Microsoft Planetary Computer STAC catalog for
+Sentinel-2 Level-2A imagery. Falls back to synthetic data
+if the API is unreachable (keeps demo working offline).
+"""
+
 import logging
-import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 
 import httpx
+import numpy as np
 
 from agent.config import IMAGERY_PROVIDER_KEY, IMAGERY_PROVIDER_URL
 from agent.models.imagery import (
@@ -13,85 +20,118 @@ from agent.models.imagery import (
 
 logger = logging.getLogger(__name__)
 
-# PC STAC client — auth method and band scale confirmed in Phase 1
-# Provider: Microsoft Planetary Computer (planetarycomputer.microsoft.com)
-# Auth: token-based — confirm exact auth flow against live endpoint in Phase 1
-# Docs: https://planetarycomputer.microsoft.com/docs/quickstarts/reading-stac/
+STAC_URL = IMAGERY_PROVIDER_URL or "https://planetarycomputer.microsoft.com/api/stac/v1"
+COLLECTION = "sentinel-2-l2a"
 
 
-# fetch imagery from planetary computer stac for given request
-def fetch_imagery(
-    request: ImageryRequest,
-) -> ImageryResponse:
+def _build_search_payload(request: ImageryRequest) -> dict:
+    """Build STAC search POST body."""
+    area = request.area
+    return {
+        "collections": [request.collection or COLLECTION],
+        "bbox": [
+            area.min_lon,
+            area.min_lat,
+            area.max_lon,
+            area.max_lat,
+        ],
+        "datetime": (
+            f"{request.date_range.start.isoformat()}"
+            f"/{request.date_range.end.isoformat()}"
+        ),
+        "limit": 1,
+        "sortby": [{"field": "properties.eo:cloud_cover", "direction": "asc"}],
+    }
+
+
+def _synthetic_fallback(request: ImageryRequest) -> ImageryResponse:
+    """Generate synthetic response when API is unavailable."""
+    logger.warning(
+        "Using synthetic fallback for area=%s dates=%s",
+        request.area,
+        request.date_range,
+    )
+    rng = np.random.default_rng(seed=42)
+    size = 5
+    bands = SpectralBands(
+        nir_raw=rng.uniform(0.3, 0.8, (size, size)).tolist(),
+        red_raw=rng.uniform(0.05, 0.2, (size, size)).tolist(),
+        green_raw=rng.uniform(0.1, 0.3, (size, size)).tolist(),
+        scl_raw=[[4] * size for _ in range(size)],
+    )
+    return ImageryResponse(
+        request_id=f"synthetic_{request.area.min_lon}",
+        acquired=datetime.combine(request.date_range.end, datetime.min.time()),
+        area=request.area,
+        bands=bands,
+        cloud_cover_pct_0_100=2.0,
+        description="Synthetic fallback (API unreachable)",
+    )
+
+
+def fetch_imagery(request: ImageryRequest) -> ImageryResponse:
+    """Fetch imagery from Planetary Computer STAC catalog."""
     logger.info(
-        "fetch_imagery called: area=%s date_range=%s collection=%s",
+        "STAC search: area=%s dates=%s collection=%s",
         request.area,
         request.date_range,
         request.collection,
     )
-    if IMAGERY_PROVIDER_URL:
-        headers = {}
-        if IMAGERY_PROVIDER_KEY:
-            headers["Ocp-Apim-Subscription-Key"] = IMAGERY_PROVIDER_KEY
 
-        dt_param = (
-            f"{request.date_range.start.isoformat()}/"
-            f"{request.date_range.end.isoformat()}"
-        )
-        stac_payload = {
-            "bbox": [
-                request.area.min_lon,
-                request.area.min_lat,
-                request.area.max_lon,
-                request.area.max_lat,
-            ],
-            "datetime": dt_param,
-            "collections": [request.collection],
-            "limit": 1,
-        }
-        try:
-            with httpx.Client(timeout=10.0) as client:
-                res = client.post(
-                    f"{IMAGERY_PROVIDER_URL}/search",
-                    json=stac_payload,
-                    headers=headers,
+    search_url = f"{STAC_URL}/search"
+    payload = _build_search_payload(request)
+    headers = {}
+    if IMAGERY_PROVIDER_KEY:
+        headers["Authorization"] = f"Bearer {IMAGERY_PROVIDER_KEY}"
+
+    try:
+        with httpx.Client(timeout=15.0) as client:
+            resp = client.post(search_url, json=payload, headers=headers)
+            if resp.status_code != 200:
+                logger.warning(
+                    "STAC API returned %s: %s",
+                    resp.status_code,
+                    resp.text[:200],
                 )
-                if res.status_code == 200:
-                    data = res.json()
-                    features = data.get("features", [])
-                    if features:
-                        feat = features[0]
-                        props = feat.get("properties", {})
-                        cloud_cover = float(props.get("eo:cloud_cover", 0.0))
-                        default_dt = datetime.now(timezone.utc).isoformat()
-                        acquired_str = props.get("datetime", default_dt)
-                        return ImageryResponse(
-                            request_id=feat.get("id", str(uuid.uuid4())),
-                            acquired=datetime.fromisoformat(
-                                acquired_str.replace("Z", "+00:00")
-                            ),
-                            area=request.area,
-                            bands=SpectralBands(
-                                nir_raw=[[0.8, 0.8], [0.8, 0.8]],
-                                red_raw=[[0.2, 0.2], [0.2, 0.2]],
-                                green_raw=[[0.3, 0.3], [0.3, 0.3]],
-                            ),
-                            cloud_cover_pct_0_100=cloud_cover,
-                        )
-        except Exception as e:
-            logger.warning(
-                "Live STAC fetch failed, falling back to clean synthetic: %s",
-                e,
+                return _synthetic_fallback(request)
+
+            data = resp.json()
+            features = data.get("features", [])
+            if not features:
+                logger.warning("No STAC features found for query")
+                return _synthetic_fallback(request)
+
+            item = features[0]
+            props = item.get("properties", {})
+            cloud_cover = props.get("eo:cloud_cover", 0.0)
+            acquired_str = props.get(
+                "datetime",
+                request.date_range.end.isoformat(),
             )
 
-    return ImageryResponse(
-        request_id=f"synth-{uuid.uuid4().hex[:8]}",
-        acquired=datetime.now(timezone.utc),
-        area=request.area,
-        bands=SpectralBands(
-            nir_raw=[[0.8, 0.8], [0.8, 0.8]],
-            red_raw=[[0.2, 0.2], [0.2, 0.2]],
-            green_raw=[[0.3, 0.3], [0.3, 0.3]],
-        ),
-        cloud_cover_pct_0_100=5.0,
-    )
+            # For demo: use synthetic bands but real metadata
+            # Full implementation would download COG assets
+            rng = np.random.default_rng(seed=hash(acquired_str))
+            size = 5
+            bands = SpectralBands(
+                nir_raw=rng.uniform(0.3, 0.8, (size, size)).tolist(),
+                red_raw=rng.uniform(0.05, 0.2, (size, size)).tolist(),
+                green_raw=rng.uniform(0.1, 0.3, (size, size)).tolist(),
+                scl_raw=[[4] * size for _ in range(size)],
+            )
+
+            return ImageryResponse(
+                request_id=item.get("id", "unknown"),
+                acquired=datetime.fromisoformat(acquired_str.replace("Z", "+00:00")),
+                area=request.area,
+                bands=bands,
+                cloud_cover_pct_0_100=float(cloud_cover),
+                description=(f"STAC item {item.get('id')} from {COLLECTION}"),
+            )
+
+    except httpx.TimeoutException:
+        logger.warning("STAC API timed out")
+        return _synthetic_fallback(request)
+    except Exception as e:
+        logger.warning("STAC API error: %s", e)
+        return _synthetic_fallback(request)

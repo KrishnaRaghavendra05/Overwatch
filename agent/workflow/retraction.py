@@ -1,22 +1,41 @@
 import logging
 from datetime import datetime, timezone
 
-from agent.models.dashboard import ChangeFlag, DashboardReadResponse
-from agent.workflow.approval_gate import execute_approved_retraction_write
+from agent.models.dashboard import DashboardReadResponse
+from agent.workflow.approval_gate import execute_approved_write
 from dashboard.read import read_flag
 
 logger = logging.getLogger(__name__)
-
-# step 9 — retraction path, also gated behind human approval
-# approval_gate.py handles the actual write — this module proposes only
 
 
 # propose retraction to human for review
 def propose_retraction(
     record_id: str,
     reason: str,
+    interactive: bool = False,
 ) -> bool:  # True if human approves retraction
     logger.info("propose_retraction: record_id=%s reason=%s", record_id, reason)
+
+    banner = [
+        "============================================================",
+        "🔄  TRUEFORGE RETRACTION GATE: ROLLBACK PROPOSAL             🔄",
+        "============================================================",
+        f"Record ID: {record_id}",
+        f"Retraction Reason: {reason}",
+        "------------------------------------------------------------",
+        "⚠️  CONSEQUENTIAL ACTION: This will mark the existing claim",
+        "    as RETRACTED / VOID in the live database.",
+        "============================================================",
+    ]
+    print("\n".join(banner))
+
+    if interactive:
+        decision = (
+            input("Approve record retraction? (Y/N) [default: Y]: ").strip().upper()
+        )
+        return decision in ("", "Y", "YES")
+
+    logger.info("Retraction approved in automated/test mode.")
     return True
 
 
@@ -30,13 +49,20 @@ def execute_approved_retraction(
         record_id,
         approver,
     )
+    # Fetch existing record to get area and payload details
     existing = read_flag(record_id)
-    retraction_flag = ChangeFlag(
-        area=existing.area,
-        detected_at=datetime.now(timezone.utc),
-        index_type="NDVI",
-        delta_ndvi_scale=0.0,
-        severity="retracted",
-        report_text=f"Retraction for record {record_id}",
+    if not existing:
+        raise ValueError(f"Record {record_id} not found in database for retraction.")
+    if existing.flag is None:
+        raise ValueError(
+            f"Record {record_id} exists but ChangeFlag could not be "
+            "reconstructed from DB. Cannot retract a corrupt record."
+        )
+
+    # Execute retraction write using the original record_id
+    return execute_approved_write(
+        flag=existing.flag,
+        approver=approver,
+        action="retract",
+        record_id=record_id,
     )
-    return execute_approved_retraction_write(retraction_flag, approver)

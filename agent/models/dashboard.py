@@ -26,7 +26,8 @@ class DashboardWritePayload(BaseModel):
 # what dashboard returns after a write or read-back
 class DashboardReadResponse(BaseModel):
     record_id: str
-    status: str  # "filed", "retracted", "pending"
+    status: str  # "FILED", "RETRACTED", "PENDING"
     written_at: datetime
     area: BoundingBox
     verified: bool  # True if read-back matches write payload
+    flag: ChangeFlag | None = None

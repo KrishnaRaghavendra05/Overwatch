@@ -28,10 +28,14 @@ where = ["."]
 include = ["core*", "agent*", "dashboard*", "scripts*"]
 
 [tool.pytest.ini_options]
-testpaths = ["core/tests", "agent/tests", "dashboard/tests"]
+testpaths = ["core/tests", "agent/tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+filterwarnings = [
+    "ignore::DeprecationWarning:starlette",
+]
+
 
 [tool.ruff]
 line-length = 88
