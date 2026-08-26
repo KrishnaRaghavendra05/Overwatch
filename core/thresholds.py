@@ -15,7 +15,9 @@ CLOUD_FRACTION_REJECT_THRESHOLD_0_1: float = 0.20
 
 # check if delta crosses threshold — True means signal real enough to investigate
 def delta_crosses_threshold(
-    delta: float,   # ndvi_delta or ndwi_delta, native -2..2 scale
+    delta: float,  # ndvi_delta or ndwi_delta, native -2..2 scale
     threshold: float,  # from constants above, native -1..1 scale
 ) -> bool:
-    raise NotImplementedError
+    if threshold < 0.0:
+        return delta <= threshold
+    return delta >= threshold

@@ -1,4 +1,4 @@
-# [project name] — working rules
+# Overwatch — working rules
 
 Geospatial change-verification agent for the TrueForge hackathon. Compares two dates of
 satellite imagery, computes a vegetation/water index (NDVI/NDWI) in a sandboxed pipeline,
