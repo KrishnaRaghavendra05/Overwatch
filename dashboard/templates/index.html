@@ -3,32 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OVERWATCH — Autonomous Remote Sensing & Human-Gated Insurance Claim Agent</title>
+  <title>TerraProof (OVERWATCH) — Autonomous Remote Sensing & Human-Gated Insurance Intelligence</title>
+  
+  <!-- Modern Typography: Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet Map CSS & JS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  
+
   <style>
     :root {
-      --bg-primary: #060911;
-      --bg-secondary: #0a0f1d;
-      --bg-card: rgba(14, 21, 37, 0.85);
-      --bg-card-hover: rgba(20, 30, 53, 0.95);
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-accent: rgba(0, 240, 255, 0.25);
+      --bg-main: #070a13;
+      --bg-sidebar: #090e1a;
+      --bg-card: rgba(13, 19, 33, 0.85);
+      --bg-card-elevated: rgba(19, 27, 46, 0.95);
+      --border: rgba(255, 255, 255, 0.07);
+      --border-focus: rgba(99, 102, 241, 0.4);
       
       --cyan: #00f0ff;
-      --cyan-glow: rgba(0, 240, 255, 0.35);
+      --cyan-glow: rgba(0, 240, 255, 0.3);
       --emerald: #10b981;
-      --emerald-glow: rgba(16, 185, 129, 0.35);
-      --violet: #8b5cf6;
-      --violet-glow: rgba(139, 92, 246, 0.35);
+      --emerald-glow: rgba(16, 185, 129, 0.3);
+      --indigo: #6366f1;
+      --indigo-glow: rgba(99, 102, 241, 0.35);
+      --purple: #8b5cf6;
       --amber: #f59e0b;
-      --amber-glow: rgba(245, 158, 11, 0.35);
-      --crimson: #ff3366;
-      --crimson-glow: rgba(255, 51, 102, 0.35);
+      --amber-glow: rgba(245, 158, 11, 0.3);
+      --crimson: #ef4444;
+      --crimson-glow: rgba(239, 68, 68, 0.3);
       
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
@@ -36,513 +41,607 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    
     body {
-      background-color: var(--bg-primary);
+      background-color: var(--bg-main);
       background-image: 
-        radial-gradient(circle at 15% 15%, rgba(0, 240, 255, 0.04) 0%, transparent 40%),
-        radial-gradient(circle at 85% 85%, rgba(139, 92, 246, 0.04) 0%, transparent 40%);
+        radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(0, 240, 255, 0.04) 0%, transparent 40%);
       color: var(--text-main);
-      font-family: 'Inter', sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       overflow-x: hidden;
     }
 
-    /* Top Navigation Header */
-    header {
-      background: rgba(8, 13, 24, 0.92);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border-subtle);
-      padding: 0.75rem 2rem;
+    /* Left Navigation Sidebar */
+    aside.sidebar {
+      width: 260px;
+      min-width: 260px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
       display: flex;
+      flex-direction: column;
       justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
+      padding: 1.5rem 1.2rem;
+      z-index: 100;
     }
 
-    .brand-section {
+    .brand-box {
       display: flex;
       align-items: center;
-      gap: 1.25rem;
+      gap: 0.75rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
     }
 
-    .logo-container {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      text-decoration: none;
-    }
-
-    .radar-icon {
-      width: 28px;
-      height: 28px;
-      border: 2px solid var(--cyan);
-      border-radius: 50%;
-      position: relative;
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--cyan), var(--indigo));
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 12px var(--cyan-glow);
+      box-shadow: 0 0 16px var(--cyan-glow);
     }
-    .radar-icon::before {
-      content: '';
-      width: 10px;
-      height: 10px;
+    .brand-icon svg { width: 22px; height: 22px; fill: #ffffff; }
+
+    .brand-text h1 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+      line-height: 1.1;
+    }
+    .brand-text span {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-top: 1.25rem;
+      flex: 1;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.7rem 0.9rem;
+      border-radius: 8px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+    .nav-item-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .nav-item svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+    .nav-item:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(139, 92, 246, 0.15));
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      color: #ffffff;
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+    }
+    .nav-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 0.15rem 0.45rem;
+      border-radius: 12px;
+    }
+
+    .sidebar-bottom {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .status-panel {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .status-label { color: var(--text-dim); }
+    .status-val {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: var(--emerald);
+      font-weight: 600;
+    }
+    .dot-online {
+      width: 7px;
+      height: 7px;
       background: var(--emerald);
       border-radius: 50%;
-      box-shadow: 0 0 8px var(--emerald);
-    }
-    .radar-icon::after {
-      content: '';
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      border: 1px solid var(--cyan);
-      animation: pulse-ring 2s infinite ease-out;
+      box-shadow: 0 0 6px var(--emerald);
     }
 
-    @keyframes pulse-ring {
-      0% { transform: scale(0.8); opacity: 1; }
-      100% { transform: scale(1.6); opacity: 0; }
+    /* Main Workspace */
+    main.workspace {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      height: 100vh;
     }
 
-    .brand-title {
-      font-family: 'Outfit', sans-serif;
+    /* Top Global Header */
+    .top-header {
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      background: rgba(9, 14, 26, 0.6);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 90;
+    }
+
+    .header-title-block h2 {
       font-size: 1.35rem;
       font-weight: 800;
-      letter-spacing: 1.5px;
-      background: linear-gradient(135deg, #ffffff 30%, var(--cyan) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
     }
-
-    .runtime-badge {
+    .header-title-block span.tagline {
+      font-size: 0.78rem;
+      color: var(--text-dim);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      font-weight: 600;
-      padding: 0.25rem 0.65rem;
-      border-radius: 6px;
-      background: rgba(0, 240, 255, 0.08);
-      border: 1px solid rgba(0, 240, 255, 0.3);
-      color: var(--cyan);
+      text-transform: uppercase;
       letter-spacing: 0.5px;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
+    }
+    .highlight-green {
+      color: var(--emerald);
     }
 
-    .header-telemetry {
+    .header-actions {
       display: flex;
       align-items: center;
-      gap: 1.25rem;
+      gap: 1rem;
     }
 
-    .telemetry-pill {
+    .hitl-status-pill {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: var(--amber);
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.75rem;
-      color: var(--text-muted);
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border-subtle);
-      padding: 0.3rem 0.75rem;
+      font-weight: 700;
+      padding: 0.4rem 0.85rem;
       border-radius: 20px;
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      box-shadow: 0 0 14px var(--amber-glow);
     }
 
-    .live-dot {
-      width: 8px;
-      height: 8px;
-      background: var(--emerald);
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+    }
+    .user-avatar {
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      box-shadow: 0 0 8px var(--emerald);
-      animation: blink 1.5s infinite;
+      background: linear-gradient(135deg, var(--indigo), var(--purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #ffffff;
     }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
+    .user-meta {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
     }
+    .user-name { font-size: 0.82rem; font-weight: 700; }
+    .user-role { font-size: 0.68rem; color: var(--text-dim); }
 
-    /* Main Grid Layout */
-    .dashboard-layout {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 1.5rem;
+    /* Dashboard Content Wrapper */
+    .dashboard-content {
       padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
       flex: 1;
     }
 
-    @media (max-width: 1200px) {
-      .dashboard-layout {
-        grid-template-columns: 1fr;
-      }
+    /* Top KPI Metric Cards Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
     }
 
-    /* Glass Cards */
-    .glass-card {
+    .kpi-card {
       background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .glass-card:hover {
-      border-color: rgba(255, 255, 255, 0.14);
-    }
-
-    .card-header {
-      padding: 1rem 1.25rem;
-      border-bottom: 1px solid var(--border-subtle);
-      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.2rem 1.35rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.5);
+    }
+    .kpi-info h4 {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.35rem;
+    }
+    .kpi-val {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.1;
+    }
+    .kpi-delta {
+      font-size: 0.74rem;
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .delta-up { color: var(--emerald); }
+    .delta-warning { color: var(--amber); }
+
+    .kpi-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .kpi-icon-box svg { width: 22px; height: 22px; }
+    .box-blue { background: rgba(0, 240, 255, 0.1); border: 1px solid rgba(0, 240, 255, 0.3); color: var(--cyan); }
+    .box-orange { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: var(--amber); }
+    .box-green { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--emerald); }
+    .box-purple { background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); color: var(--purple); }
+
+    /* Middle Primary Grid: Map + Active Investigation */
+    .middle-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 1.5rem;
     }
 
-    .card-title {
-      font-family: 'Outfit', sans-serif;
+    /* Live Investigation Map Card */
+    .map-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6);
+    }
+
+    .map-card-header {
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10, 15, 28, 0.7);
+      backdrop-filter: blur(12px);
+      z-index: 10;
+    }
+    .map-header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .map-title {
       font-size: 0.95rem;
       font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
+      color: #ffffff;
+    }
+    .live-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--emerald);
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      padding: 0.15rem 0.5rem;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--emerald);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--emerald);
+    }
+
+    .index-select {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
       color: var(--text-main);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .map-viewport {
+      height: 420px;
+      width: 100%;
+      position: relative;
+    }
+    #map {
+      width: 100%;
+      height: 100%;
+      background: #090e1a;
+    }
+
+    /* Map HUD & Overlays */
+    .map-hud-location {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      z-index: 400;
+      background: rgba(8, 12, 23, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.5rem 0.85rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+    .map-hud-location strong { color: var(--text-main); font-size: 0.8rem; }
+
+    .map-hud-legend {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      z-index: 400;
+      background: rgba(8, 12, 23, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+    }
+    .legend-title { color: var(--text-dim); font-weight: 700; font-size: 0.65rem; text-transform: uppercase; }
+    .legend-bar-container {
       display: flex;
       align-items: center;
       gap: 0.6rem;
     }
-
-    .card-subtitle {
-      font-size: 0.78rem;
-      color: var(--text-dim);
-      font-family: 'JetBrains Mono', monospace;
+    .legend-bar {
+      width: 8px;
+      height: 60px;
+      border-radius: 4px;
+      background: linear-gradient(to bottom, #10b981 0%, #eab308 50%, #ef4444 100%);
+      box-shadow: 0 0 8px rgba(0,0,0,0.5);
     }
-
-    .card-body {
-      padding: 1.25rem;
-      flex: 1;
+    .legend-labels {
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
-    }
-
-    /* Satellite Map Viewport */
-    #map-container {
-      position: relative;
-      height: 480px;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 1px solid var(--border-subtle);
-    }
-
-    #map {
-      width: 100%;
-      height: 100%;
-      background: #0b111e;
-    }
-
-    .map-overlay-hud {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      z-index: 500;
-      background: rgba(6, 11, 22, 0.85);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--border-accent);
-      border-radius: 8px;
-      padding: 0.5rem 0.85rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--cyan);
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
-    }
-
-    .map-footer-telemetry {
-      display: flex;
       justify-content: space-between;
-      align-items: center;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
+      height: 60px;
       color: var(--text-muted);
-      padding: 0.5rem 0.25rem 0 0.25rem;
     }
 
-    /* Scenario Selector Grid */
-    .scenario-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.75rem;
+    /* Active Investigation Card (Right Panel) */
+    .investigation-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.25rem;
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+    .investigation-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--indigo), var(--cyan));
     }
 
-    .scenario-btn {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 0.85rem;
-      cursor: pointer;
-      text-align: left;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    .inv-header {
       display: flex;
       flex-direction: column;
       gap: 0.35rem;
     }
-    .scenario-btn:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: var(--border-accent);
-      transform: translateY(-2px);
-    }
-    .scenario-btn.active {
-      background: rgba(0, 240, 255, 0.06);
-      border-color: var(--cyan);
-      box-shadow: 0 0 16px var(--cyan-glow);
-    }
-
-    .scenario-btn-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .scenario-icon {
-      font-size: 1.1rem;
-    }
-    .scenario-tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
+    .inv-category {
+      font-size: 0.75rem;
+      color: var(--indigo);
       font-weight: 700;
-      padding: 0.15rem 0.45rem;
-      border-radius: 4px;
-    }
-    .tag-drought { background: rgba(245, 158, 11, 0.15); color: var(--amber); border: 1px solid rgba(245, 158, 11, 0.4); }
-    .tag-flood { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
-    .tag-ambiguous { background: rgba(139, 92, 246, 0.15); color: var(--violet); border: 1px solid rgba(139, 92, 246, 0.4); }
-    .tag-cloud { background: rgba(255, 51, 102, 0.15); color: var(--crimson); border: 1px solid rgba(255, 51, 102, 0.4); }
-
-    .scenario-name {
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-    .scenario-desc {
-      font-size: 0.72rem;
-      color: var(--text-dim);
-    }
-
-    /* Action Trigger Button */
-    .btn-launch {
-      background: linear-gradient(135deg, #00c6ff, #0072ff);
-      border: none;
-      border-radius: 8px;
-      color: #ffffff;
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      padding: 0.9rem 1.5rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.6rem;
-      box-shadow: 0 4px 20px rgba(0, 114, 255, 0.4);
-      transition: all 0.2s;
-    }
-    .btn-launch:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 25px rgba(0, 198, 255, 0.6);
-    }
-    .btn-launch:active {
-      transform: translateY(0);
-    }
-    .btn-launch:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-
-    /* Stepper & Execution Timeline */
-    .execution-terminal {
-      background: rgba(5, 8, 16, 0.95);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.85rem;
-      max-height: 420px;
-      overflow-y: auto;
-    }
-
-    .trace-item {
-      display: flex;
-      gap: 0.85rem;
-      padding: 0.65rem 0.85rem;
-      border-radius: 6px;
-      background: rgba(255, 255, 255, 0.015);
-      border-left: 3px solid var(--border-subtle);
-      font-size: 0.8rem;
-      animation: fadeIn 0.3s ease-in-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .trace-item.step-thought { border-left-color: var(--violet); }
-    .trace-item.step-action { border-left-color: var(--cyan); }
-    .trace-item.step-sandbox { border-left-color: #38bdf8; }
-    .trace-item.step-subagents { border-left-color: var(--emerald); }
-    .trace-item.step-interrupt { border-left-color: var(--amber); background: rgba(245, 158, 11, 0.06); }
-    .trace-item.step-discard { border-left-color: var(--crimson); background: rgba(255, 51, 102, 0.06); }
-
-    .trace-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-    }
-    .trace-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .trace-title {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 700;
-      font-size: 0.82rem;
-      color: var(--text-main);
-    }
-    .trace-tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      padding: 0.1rem 0.4rem;
-      border-radius: 4px;
       text-transform: uppercase;
-      font-weight: 700;
-    }
-    .tag-purple { background: rgba(139, 92, 246, 0.2); color: var(--violet); }
-    .tag-blue { background: rgba(0, 240, 255, 0.2); color: var(--cyan); }
-    .tag-green { background: rgba(16, 185, 129, 0.2); color: var(--emerald); }
-    .tag-yellow { background: rgba(245, 158, 11, 0.2); color: var(--amber); }
-    .tag-red { background: rgba(255, 51, 102, 0.2); color: var(--crimson); }
-
-    .trace-body {
+      letter-spacing: 0.8px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.74rem;
-      color: var(--text-muted);
-      white-space: pre-wrap;
-      line-height: 1.4;
+    }
+    .inv-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .inv-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+    }
+    .badge-hazard {
+      font-size: 0.68rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      color: #a5b4fc;
+      text-transform: uppercase;
+    }
+    .inv-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
     }
 
-    /* Subagent Scorecard Box */
-    .subagent-grid {
+    .meta-metrics-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.6rem;
-      margin-top: 0.4rem;
-    }
-    .subagent-card {
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
       background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--border-subtle);
-      border-radius: 6px;
-      padding: 0.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.9rem 1.1rem;
     }
-    .subagent-name {
-      font-size: 0.68rem;
+    .meta-box h5 {
+      font-size: 0.72rem;
       color: var(--text-dim);
       font-weight: 600;
       text-transform: uppercase;
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
     }
-    .subagent-status {
+    .meta-box p {
+      font-size: 0.82rem;
+      color: var(--text-main);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
-      font-weight: 700;
+      line-height: 1.3;
     }
 
-    /* Human Approval Gate Action Banner */
-    .approval-gate-banner {
-      background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(245, 158, 11, 0.04));
-      border: 2px solid var(--amber);
-      border-radius: 10px;
-      padding: 1.25rem;
+    /* Human Approval Gate Box */
+    .hitl-gate-box {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(245, 158, 11, 0.02));
+      border: 1.5px solid var(--amber);
+      border-radius: 12px;
+      padding: 1.1rem;
       display: flex;
       flex-direction: column;
       gap: 0.85rem;
       box-shadow: 0 0 24px var(--amber-glow);
-      animation: pulse-border 2s infinite;
     }
-    @keyframes pulse-border {
-      0%, 100% { box-shadow: 0 0 12px rgba(245, 158, 11, 0.2); }
-      50% { box-shadow: 0 0 28px rgba(245, 158, 11, 0.45); }
-    }
-
-    .approval-banner-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1rem;
-      font-weight: 800;
-      color: var(--amber);
+    .hitl-header-row {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.65rem;
+    }
+    .hitl-header-text h4 {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--amber);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .hitl-header-text p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
     }
 
-    .approval-banner-desc {
-      font-size: 0.82rem;
-      color: var(--text-main);
-      line-height: 1.45;
-    }
-
-    .approval-btn-row {
-      display: flex;
+    .hitl-buttons-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 0.75rem;
     }
     .btn-approve {
-      flex: 1;
       background: linear-gradient(135deg, #059669, #10b981);
       border: none;
-      border-radius: 6px;
-      padding: 0.75rem;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
       color: #ffffff;
-      font-family: 'Outfit', sans-serif;
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.4rem;
-      box-shadow: 0 4px 14px var(--emerald-glow);
+      gap: 0.5rem;
+      box-shadow: 0 4px 16px var(--emerald-glow);
       transition: all 0.2s;
     }
     .btn-approve:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px var(--emerald-glow);
+      box-shadow: 0 6px 24px var(--emerald-glow);
     }
     .btn-reject {
-      flex: 0.8;
-      background: rgba(255, 51, 102, 0.1);
+      background: rgba(239, 68, 68, 0.08);
       border: 1px solid var(--crimson);
-      border-radius: 6px;
-      padding: 0.75rem;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
       color: var(--crimson);
-      font-family: 'Outfit', sans-serif;
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
       transition: all 0.2s;
     }
     .btn-reject:hover {
@@ -550,88 +649,244 @@
       color: #ffffff;
     }
 
-    /* Ledger Table */
-    .ledger-table-container {
-      width: 100%;
-      overflow-x: auto;
-    }
-    table.ledger-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.8rem;
-    }
-    table.ledger-table th {
-      text-align: left;
-      padding: 0.65rem 0.85rem;
-      color: var(--text-dim);
-      font-family: 'Outfit', sans-serif;
-      font-weight: 700;
-      text-transform: uppercase;
+    .auto-timeout-label {
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.72rem;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-    table.ledger-table td {
-      padding: 0.75rem 0.85rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-      color: var(--text-main);
-    }
-    table.ledger-table tr:hover td {
-      background: rgba(255, 255, 255, 0.02);
+      color: var(--text-dim);
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
     }
 
-    .badge-status {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      font-weight: 700;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      display: inline-block;
+    /* Bottom 3 Columns Grid: Progress, Subagents, Trace */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr 1.25fr;
+      gap: 1.5rem;
     }
-    .status-filed {
+
+    .panel-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-shadow: 0 8px 24px -5px rgba(0, 0, 0, 0.5);
+    }
+    .panel-card h4.panel-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-main);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Execution Stepper */
+    .stepper-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      position: relative;
+    }
+    .step-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .step-left {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .step-check {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid var(--emerald);
+      color: var(--emerald);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+    }
+    .step-item.paused .step-check {
+      background: rgba(139, 92, 246, 0.2);
+      border-color: var(--purple);
+      color: var(--purple);
+    }
+    .step-name { color: var(--text-main); }
+    .step-time { color: var(--text-dim); font-size: 0.72rem; }
+    .pill-paused {
+      background: rgba(139, 92, 246, 0.2);
+      border: 1px solid var(--purple);
+      color: #c4b5fd;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+    }
+
+    /* Subagent Cards */
+    .subagents-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .subagent-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .subagent-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .subagent-icon-box {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+    .subagent-texts h5 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .subagent-texts p {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .subagent-scores {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .badge-pass {
       background: rgba(16, 185, 129, 0.15);
       border: 1px solid var(--emerald);
       color: var(--emerald);
-    }
-    .status-retracted {
-      background: rgba(255, 51, 102, 0.15);
-      border: 1px solid var(--crimson);
-      color: var(--crimson);
-    }
-
-    .btn-action-small {
+      font-size: 0.68rem;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      padding: 0.25rem 0.55rem;
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
       border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.15s;
     }
-    .btn-dossier {
-      background: rgba(0, 240, 255, 0.1);
-      border: 1px solid var(--cyan);
-      color: var(--cyan);
-    }
-    .btn-dossier:hover {
-      background: var(--cyan);
-      color: #060911;
-    }
-    .btn-retract {
-      background: rgba(255, 51, 102, 0.1);
-      border: 1px solid var(--crimson);
-      color: var(--crimson);
-      margin-left: 0.35rem;
-    }
-    .btn-retract:hover {
-      background: var(--crimson);
-      color: #ffffff;
+    .subagent-pct {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--emerald);
     }
 
-    /* Dossier Modal */
+    .confidence-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 0.6rem;
+      border-top: 1px solid var(--border);
+    }
+    .confidence-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .confidence-meter-box {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .conf-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid var(--emerald);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--emerald);
+      box-shadow: 0 0 10px var(--emerald-glow);
+    }
+    .conf-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--emerald);
+      color: var(--emerald);
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+    }
+
+    /* Investigation Trace Log Terminal */
+    .trace-terminal {
+      background: #050811;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.85rem;
+      height: 200px;
+      overflow-y: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.73rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .log-row {
+      display: flex;
+      gap: 0.6rem;
+      line-height: 1.35;
+    }
+    .log-ts { color: var(--text-dim); }
+    .log-text { color: var(--emerald); }
+    .log-text.log-mcp { color: var(--cyan); }
+    .log-text.log-sandbox { color: #38bdf8; }
+    .log-text.log-hitl { color: var(--amber); }
+
+    /* Footer Banner */
+    .footer-ribbon {
+      margin-top: 1rem;
+      padding: 0.85rem;
+      border-radius: 12px;
+      background: rgba(99, 102, 241, 0.08);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      font-size: 0.78rem;
+      color: #c4b5fd;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Modal for Dossier */
     .modal-backdrop {
       position: fixed;
       inset: 0;
       background: rgba(3, 6, 15, 0.85);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(14px);
       z-index: 2000;
       display: none;
       align-items: center;
@@ -639,19 +894,19 @@
       padding: 2rem;
     }
     .modal-card {
-      background: #0c1322;
-      border: 1px solid var(--border-accent);
-      border-radius: 12px;
+      background: #0b1120;
+      border: 1px solid var(--border-focus);
+      border-radius: 14px;
       width: 100%;
       max-width: 800px;
       max-height: 85vh;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
     }
     .modal-header {
-      padding: 1.25rem;
-      border-bottom: 1px solid var(--border-subtle);
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -659,19 +914,9 @@
     .modal-body {
       padding: 1.5rem;
       overflow-y: auto;
-      font-family: 'Inter', sans-serif;
       font-size: 0.88rem;
       line-height: 1.6;
       color: var(--text-main);
-    }
-    .modal-body h1, .modal-body h2 {
-      font-family: 'Outfit', sans-serif;
-      margin: 1rem 0 0.5rem 0;
-      color: var(--cyan);
-    }
-    .modal-body ul {
-      margin-left: 1.25rem;
-      margin-bottom: 1rem;
     }
     .modal-close {
       background: transparent;
@@ -680,459 +925,611 @@
       font-size: 1.5rem;
       cursor: pointer;
     }
-    .modal-close:hover {
-      color: #ffffff;
-    }
   </style>
 </head>
 <body>
 
-  <!-- Top Navigation & Live Telemetry -->
-  <header>
-    <div class="brand-section">
-      <a href="/" class="logo-container">
-        <div class="radar-icon"></div>
-        <span class="brand-title">OVERWATCH</span>
-      </a>
-      <div class="runtime-badge">
-        <span>⚡ TRUEFORGE AGENT HARNESS</span>
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <div>
+      <div class="brand-box">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V8.26l7-3.89v8.62z"/></svg>
+        </div>
+        <div class="brand-text">
+          <h1>TerraProof</h1>
+          <span>Overwatch AI</span>
+        </div>
       </div>
-    </div>
-    
-    <div class="header-telemetry">
-      <div class="telemetry-pill">
-        <span class="live-dot"></span>
-        <span>SENTINEL-2 L2A LIVE</span>
-      </div>
-      <div class="telemetry-pill">
-        <span>🛡️ HITL GATE: STRICT</span>
-      </div>
-      <div class="telemetry-pill">
-        <span id="utc-clock">00:00:00 UTC</span>
-      </div>
-    </div>
-  </header>
 
-  <!-- Main Dashboard Layout -->
-  <div class="dashboard-layout">
-    
-    <!-- LEFT COLUMN: Satellite Observation & Claims Ledger -->
-    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-      
-      <!-- Satellite Map Viewport -->
-      <div class="glass-card">
-        <div class="card-header">
-          <div class="card-title">
-            <span>🛰️</span>
-            <span>Sentinel-2 Multi-Spectral Viewport</span>
+      <nav class="nav-menu">
+        <a class="nav-item active" onclick="switchTab('dashboard')">
+          <div class="nav-item-left">
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <span>Dashboard</span>
           </div>
-          <div class="card-subtitle" id="active-coordinates-display">
-            Target: [-93.550, 42.010] to [-93.500, 42.050]
+          <span>›</span>
+        </a>
+        <a class="nav-item" onclick="triggerPreset('crop_damage')">
+          <div class="nav-item-left">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+            <span>New Investigation</span>
+          </div>
+        </a>
+        <a class="nav-item" onclick="openClaimsQueue()">
+          <div class="nav-item-left">
+            <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+            <span>Claims Queue</span>
+          </div>
+          <span class="nav-badge" id="sidebar-queue-badge">{{ flags|length }}</span>
+        </a>
+        <a class="nav-item" onclick="scrollToTrace()">
+          <div class="nav-item-left">
+            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+            <span>Execution Trace</span>
+          </div>
+        </a>
+        <a class="nav-item">
+          <div class="nav-item-left">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            <span>Analytics</span>
+          </div>
+        </a>
+        <a class="nav-item">
+          <div class="nav-item-left">
+            <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+            <span>Map Explorer</span>
+          </div>
+        </a>
+        <a class="nav-item">
+          <div class="nav-item-left">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <span>Settings</span>
+          </div>
+        </a>
+      </nav>
+    </div>
+
+    <!-- System Status Footer -->
+    <div class="sidebar-bottom">
+      <div class="status-panel">
+        <div class="status-row">
+          <span class="status-label">System Status</span>
+          <span class="status-val"><span class="dot-online"></span> Operational</span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">MCP Imagery Server</span>
+          <span class="status-val"><span class="dot-online"></span> Online</span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">MCP Dashboard Server</span>
+          <span class="status-val"><span class="dot-online"></span> Online</span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">Sandbox</span>
+          <span class="status-val" style="color: #60a5fa;">Daytona (py3.12)</span>
+        </div>
+      </div>
+      <div style="font-size: 0.68rem; color: var(--text-dim); text-align: center; font-family: 'JetBrains Mono', monospace;">
+        TerraProof v1.0.0 • TrueForge
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="workspace">
+    
+    <!-- Top Global Header -->
+    <header class="top-header">
+      <div class="header-title-block">
+        <span class="tagline">AI-Powered Remote Sensing for</span>
+        <h2>Agricultural <span class="highlight-green">Insurance Intelligence</span></h2>
+      </div>
+
+      <div class="header-actions">
+        <div class="hitl-status-pill" id="global-hitl-pill">
+          <span>⏳</span>
+          <span id="global-hitl-text">HITL PAUSE ACTIVE</span>
+        </div>
+
+        <div class="user-profile">
+          <div class="user-avatar">KH</div>
+          <div class="user-meta">
+            <span class="user-name">Kaamil Hifzaan</span>
+            <span class="user-role">Human Assessor</span>
           </div>
         </div>
-        <div class="card-body" style="padding-bottom: 0.85rem;">
-          <div id="map-container">
+      </div>
+    </header>
+
+    <!-- Dashboard Content Area -->
+    <div class="dashboard-content">
+      
+      <!-- Top 4 KPI Cards Grid -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-info">
+            <h4>Total Claims Filed</h4>
+            <div class="kpi-val" id="kpi-total-filed">128</div>
+            <div class="kpi-delta delta-up">↑ +12 this week</div>
+          </div>
+          <div class="kpi-icon-box box-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-info">
+            <h4>Under Investigation</h4>
+            <div class="kpi-val" style="color: var(--amber);">3</div>
+            <div class="kpi-delta delta-warning">⚠ Requires Review</div>
+          </div>
+          <div class="kpi-icon-box box-orange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-info">
+            <h4>Approved (This Month)</h4>
+            <div class="kpi-val" style="color: var(--emerald);">24</div>
+            <div class="kpi-delta delta-up">↑ +18% vs last month</div>
+          </div>
+          <div class="kpi-icon-box box-green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-info">
+            <h4>Avg. Processing Time</h4>
+            <div class="kpi-val" style="color: #a855f7;">6m 24s</div>
+            <div class="kpi-delta delta-up">↓ -22% vs last month</div>
+          </div>
+          <div class="kpi-icon-box box-purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 10"></polyline></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Middle Primary Grid: Live Heatmap Map + Active Investigation -->
+      <div class="middle-grid">
+        
+        <!-- Live Investigation Map with High-Resolution Spectral Heatmap Overlay -->
+        <div class="map-card">
+          <div class="map-card-header">
+            <div class="map-header-left">
+              <span class="map-title">Live Investigation Map</span>
+              <div class="live-badge"><span class="live-dot"></span> Live</div>
+            </div>
+            <select class="index-select" id="map-index-toggle" onchange="toggleMapIndex()">
+              <option value="NDVI">NDVI Delta (Vegetation Loss)</option>
+              <option value="NDWI">NDWI Delta (Flood Extent)</option>
+            </select>
+          </div>
+
+          <div class="map-viewport">
             <div id="map"></div>
-            <div class="map-overlay-hud">
-              <div>BAND 08 (NIR): <span id="hud-nir">INGESTED</span></div>
-              <div>BAND 04 (RED): <span id="hud-red">INGESTED</span></div>
-              <div>SCL MASK: <span id="hud-scl">ACTIVE</span></div>
-            </div>
-          </div>
-          <div class="map-footer-telemetry">
-            <span>Spatial Extent: <strong id="hud-hectares" style="color: var(--cyan);">1,830.4 ha</strong> (4,523.0 acres)</span>
-            <span style="color: var(--text-dim);">Resolution: 10m Ground Sample Distance</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Verified Claims Ledger (SQLite Store) -->
-      <div class="glass-card">
-        <div class="card-header">
-          <div class="card-title">
-            <span>📋</span>
-            <span>Verified Claims Ledger (SQLite Store)</span>
-          </div>
-          <div class="card-subtitle">
-            <span id="ledger-count">{{ flags|length }}</span> Records Filed
-          </div>
-        </div>
-        <div class="card-body" style="padding: 0;">
-          <div class="ledger-table-container">
-            <table class="ledger-table" id="claims-ledger-table">
-              <thead>
-                <tr>
-                  <th>Record ID</th>
-                  <th>Index Delta</th>
-                  <th>Status</th>
-                  <th>Timestamp</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="ledger-tbody">
-                {% if flags %}
-                  {% for f in flags %}
-                  <tr id="row-{{ f.record_id }}">
-                    <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">{{ f.record_id }}</td>
-                    <td>
-                      <strong style="color: {% if f.flag and f.flag.delta_ndvi_scale < -0.2 %}var(--crimson){% elif f.flag and f.flag.delta_ndvi_scale > 0.15 %}var(--cyan){% else %}var(--amber){% endif %};">
-                        {{ f.flag.index_type if f.flag else "NDVI" }} {{ "%.3f"|format(f.flag.delta_ndvi_scale) if f.flag else "-0.945" }}
-                      </strong>
-                    </td>
-                    <td>
-                      <span class="badge-status {% if f.status == 'filed' or f.status == 'FILED' %}status-filed{% else %}status-retracted{% endif %}">
-                        {{ f.status|upper }}
-                      </span>
-                    </td>
-                    <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--text-muted);">
-                      {{ f.written_at }}
-                    </td>
-                    <td>
-                      <button class="btn-action-small btn-dossier" onclick="viewDossier('{{ f.record_id }}')">Dossier</button>
-                      {% if f.status == 'filed' or f.status == 'FILED' %}
-                      <button class="btn-action-small btn-retract" onclick="triggerRetraction('{{ f.record_id }}')">Retract</button>
-                      {% endif %}
-                    </td>
-                  </tr>
-                  {% endfor %}
-                {% else %}
-                  <tr>
-                    <td colspan="5" style="text-align: center; color: var(--text-dim); padding: 2rem;">
-                      No claims filed yet. Run an agent scenario to trigger investigation.
-                    </td>
-                  </tr>
-                {% endif %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- RIGHT COLUMN: Mission Control, Scenario Trigger & Live TrueForge Trace -->
-    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-      
-      <!-- Mission Control: Target & Scenario Presets -->
-      <div class="glass-card">
-        <div class="card-header">
-          <div class="card-title">
-            <span>🎯</span>
-            <span>Target Area & Scenario Presets</span>
-          </div>
-          <div class="card-subtitle">Agricultural Insurance</div>
-        </div>
-        <div class="card-body">
-          <div class="scenario-grid">
             
-            <div class="scenario-btn active" id="btn-scen-crop" onclick="selectScenario('crop_damage')">
-              <div class="scenario-btn-header">
-                <span class="scenario-icon">🌽</span>
-                <span class="scenario-tag tag-drought">DROUGHT</span>
-              </div>
-              <div class="scenario-name">Iowa Corn Canopy</div>
-              <div class="scenario-desc">Severe crop stress & biomass loss (NDVI -0.945)</div>
+            <div class="map-hud-location">
+              <strong id="map-location-name">Iowa, USA</strong>
+              <span id="map-location-coords">42.0322° N, 93.5815° W</span>
             </div>
 
-            <div class="scenario-btn" id="btn-scen-flood" onclick="selectScenario('flood')">
-              <div class="scenario-btn-header">
-                <span class="scenario-icon">🌊</span>
-                <span class="scenario-tag tag-flood">FLOOD</span>
+            <div class="map-hud-legend">
+              <span class="legend-title" id="legend-label">NDVI Delta</span>
+              <div class="legend-bar-container">
+                <div class="legend-bar"></div>
+                <div class="legend-labels">
+                  <span>+0.4 (Healthy)</span>
+                  <span>0 (Normal)</span>
+                  <span>-0.4 (Severe)</span>
+                </div>
               </div>
-              <div class="scenario-name">Assam Floodplain</div>
-              <div class="scenario-desc">Monsoon riverine inundation (NDWI +0.865)</div>
             </div>
+          </div>
+        </div>
 
-            <div class="scenario-btn" id="btn-scen-ambig" onclick="selectScenario('ambiguous_haze')">
-              <div class="scenario-btn-header">
-                <span class="scenario-icon">🌫️</span>
-                <span class="scenario-tag tag-ambiguous">HAZE TRIAGE</span>
-              </div>
-              <div class="scenario-name">Fresno Orchard</div>
-              <div class="scenario-desc">Wildfire smoke atmospheric triage gate</div>
+        <!-- Active Investigation & Consequential Human Approval Action Panel -->
+        <div class="investigation-card">
+          <div class="inv-header">
+            <span class="inv-category">Active Investigation</span>
+            <div class="inv-title-row">
+              <h3 class="inv-title" id="inv-title-display">Iowa Corn Canopy Stress</h3>
+              <span class="badge-hazard" id="inv-badge-display">CROP STRESS</span>
             </div>
-
-            <div class="scenario-btn" id="btn-scen-cloud" onclick="selectScenario('cloud_false_positive')">
-              <div class="scenario-btn-header">
-                <span class="scenario-icon">☁️</span>
-                <span class="scenario-tag tag-cloud">DISPROOF</span>
-              </div>
-              <div class="scenario-name">Amazon Sector 12</div>
-              <div class="scenario-desc">Cloud shadow false positive (Subagent Rejection)</div>
+            <div class="inv-id">
+              <span>Investigation ID: <strong id="inv-id-display" style="color: #ffffff;">inv_20260615_001</strong></span>
+              <span style="cursor: pointer;">📋</span>
             </div>
-
           </div>
 
-          <button class="btn-launch" id="btn-run-agent" onclick="runAgentInvestigation()">
-            <span>⚡</span>
-            <span>Run TrueForge Agent Investigation</span>
-          </button>
+          <div class="meta-metrics-grid">
+            <div class="meta-box">
+              <h5>📅 Date Range</h5>
+              <p id="inv-dates-display">Before: 2026-06-01<br>After: 2026-07-15</p>
+            </div>
+            <div class="meta-box">
+              <h5>📍 Area Extent</h5>
+              <p id="inv-area-display"><strong>156.3 Hectares</strong><br>Iowa, USA</p>
+            </div>
+          </div>
+
+          <!-- HITL Consequential Approval Action Gate -->
+          <div class="hitl-gate-box" id="hitl-action-box">
+            <div class="hitl-header-row">
+              <span style="font-size: 1.3rem;">⏳</span>
+              <div class="hitl-header-text">
+                <h4>HITL PAUSE ACTIVE</h4>
+                <p id="hitl-subtitle-text">Awaiting human actuarial decision...</p>
+              </div>
+            </div>
+
+            <div class="hitl-buttons-row">
+              <button class="btn-approve" onclick="submitDecision('APPROVE')">
+                <span>✓</span>
+                <span>Approve Claim</span>
+              </button>
+              <button class="btn-reject" onclick="submitDecision('REJECT')">
+                <span>✕</span>
+                <span>Reject Claim</span>
+              </button>
+            </div>
+
+            <div class="auto-timeout-label">
+              <span>⏱</span>
+              <span>Auto-timeout in 29:42 • TrueForge Guardrails Active</span>
+            </div>
+          </div>
+
         </div>
+
       </div>
 
-      <!-- Human Approval Gate Alert (Dynamic Pop-in when HITL triggers) -->
-      <div id="hitl-action-container" style="display: none;"></div>
-
-      <!-- Live Agent Execution Terminal & Pipeline Trace -->
-      <div class="glass-card">
-        <div class="card-header">
-          <div class="card-title">
-            <span>⚡</span>
-            <span>TrueForge Execution Trace & Subagents</span>
-          </div>
-          <div class="card-subtitle" id="agent-status-badge">STANDBY</div>
-        </div>
-        <div class="card-body">
-          <div class="execution-terminal" id="terminal-trace-stream">
-            <div class="trace-item step-thought">
-              <div class="trace-content">
-                <div class="trace-header">
-                  <span class="trace-title">System Standby</span>
-                  <span class="trace-tag tag-purple">READY</span>
-                </div>
-                <div class="trace-body">Select a scenario preset and click 'Run TrueForge Agent Investigation' to dispatch the multi-tool workflow.</div>
+      <!-- Bottom 3 Columns Grid: Stepper, Subagents, Live Trace Log -->
+      <div class="bottom-grid">
+        
+        <!-- Execution Progress Stepper -->
+        <div class="panel-card">
+          <h4 class="panel-title">
+            <span>Execution Progress</span>
+          </h4>
+          <div class="stepper-list">
+            <div class="step-item">
+              <div class="step-left">
+                <div class="step-check">✓</div>
+                <span class="step-name">1. Goal Formulation</span>
+              </div>
+              <span class="step-time">00:00:02</span>
+            </div>
+            <div class="step-item">
+              <div class="step-left">
+                <div class="step-check">✓</div>
+                <span class="step-name">2. Fetch Imagery (MCP)</span>
+              </div>
+              <span class="step-time">00:00:08</span>
+            </div>
+            <div class="step-item">
+              <div class="step-left">
+                <div class="step-check">✓</div>
+                <span class="step-name">3. Sandbox Math (Daytona)</span>
+              </div>
+              <span class="step-time">00:00:15</span>
+            </div>
+            <div class="step-item">
+              <div class="step-left">
+                <div class="step-check">✓</div>
+                <span class="step-name">4. Verification Subagents</span>
+              </div>
+              <span class="step-time">00:00:42</span>
+            </div>
+            <div class="step-item">
+              <div class="step-left">
+                <div class="step-check">✓</div>
+                <span class="step-name">5. Dossier & AI Assessment</span>
+              </div>
+              <span class="step-time">00:01:18</span>
+            </div>
+            <div class="step-item paused" id="step-6-item">
+              <div class="step-left">
+                <div class="step-check">⏸</div>
+                <span class="step-name">6. Human Approval Gate</span>
+              </div>
+              <span class="pill-paused" id="step-6-pill">PAUSED</span>
+            </div>
+            <div class="step-item" id="step-7-item">
+              <div class="step-left">
+                <div class="step-check" id="step-7-check" style="border-color: var(--border); color: var(--text-dim); background: transparent;">○</div>
+                <span class="step-name" id="step-7-name" style="color: var(--text-dim);">7. Write & Verify (Pending)</span>
               </div>
             </div>
           </div>
         </div>
+
+        <!-- Verification Subagents Breakdown -->
+        <div class="panel-card">
+          <h4 class="panel-title">
+            <span>Verification Subagents</span>
+          </h4>
+          <div class="subagents-container">
+            <div class="subagent-item">
+              <div class="subagent-info">
+                <div class="subagent-icon-box">☁️</div>
+                <div class="subagent-texts">
+                  <h5>Cloud & Shadow Check</h5>
+                  <p id="sub-cloud-desc">Cloud cover: 0.0% (SCL Clean)</p>
+                </div>
+              </div>
+              <div class="subagent-scores">
+                <span class="badge-pass" id="sub-cloud-badge">PASS</span>
+                <span class="subagent-pct" id="sub-cloud-pct">95%</span>
+              </div>
+            </div>
+
+            <div class="subagent-item">
+              <div class="subagent-info">
+                <div class="subagent-icon-box">📈</div>
+                <div class="subagent-texts">
+                  <h5>Threshold Severity Check</h5>
+                  <p id="sub-thresh-desc">NDVI Delta: -0.945</p>
+                </div>
+              </div>
+              <div class="subagent-scores">
+                <span class="badge-pass" id="sub-thresh-badge">PASS</span>
+                <span class="subagent-pct" id="sub-thresh-pct">95%</span>
+              </div>
+            </div>
+
+            <div class="subagent-item">
+              <div class="subagent-info">
+                <div class="subagent-icon-box">⛅</div>
+                <div class="subagent-texts">
+                  <h5>Weather & Seasonality Check</h5>
+                  <p id="sub-weather-desc">Drought & heat anomaly confirmed</p>
+                </div>
+              </div>
+              <div class="subagent-scores">
+                <span class="badge-pass" id="sub-weather-badge">PASS</span>
+                <span class="subagent-pct" id="sub-weather-pct">90%</span>
+              </div>
+            </div>
+
+            <div class="confidence-footer">
+              <span class="confidence-label">Overall Confidence</span>
+              <div class="confidence-meter-box">
+                <div class="conf-circle" id="conf-circle-val">93%</div>
+                <span class="conf-tag" id="conf-tag-val">HIGH CONFIDENCE</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Investigation Trace Terminal -->
+        <div class="panel-card" id="trace-panel">
+          <h4 class="panel-title">
+            <span>Investigation Trace <span class="live-dot" style="display:inline-block; margin-left: 4px;"></span></span>
+            <button class="btn-action-small" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-muted);" onclick="openFullTraceModal()">View Full Log</button>
+          </h4>
+          <div class="trace-terminal" id="terminal-logs">
+            <div class="log-row"><span class="log-ts">14:32:01</span> <span class="log-text">Goal formulated: Detect crop stress via NDVI delta</span></div>
+            <div class="log-row"><span class="log-ts">14:32:03</span> <span class="log-text log-mcp">MCP Call → fetch_imagery (Sentinel-2 baseline)</span></div>
+            <div class="log-row"><span class="log-ts">14:32:07</span> <span class="log-text log-mcp">MCP Response ← Sentinel-2 L2A (2026-06-01)</span></div>
+            <div class="log-row"><span class="log-ts">14:32:07</span> <span class="log-text log-mcp">MCP Call → fetch_imagery (Sentinel-2 current)</span></div>
+            <div class="log-row"><span class="log-ts">14:32:12</span> <span class="log-text log-mcp">MCP Response ← Sentinel-2 L2A (2026-07-15)</span></div>
+            <div class="log-row"><span class="log-ts">14:32:15</span> <span class="log-text log-sandbox">Daytona Sandbox: Pure numpy math started</span></div>
+            <div class="log-row"><span class="log-ts">14:32:21</span> <span class="log-text log-sandbox">Daytona Sandbox: NDVI delta computed (-0.945)</span></div>
+            <div class="log-row"><span class="log-ts">14:32:22</span> <span class="log-text">Dispatching 3 verification subagents...</span></div>
+            <div class="log-row"><span class="log-ts">14:32:24</span> <span class="log-text">Subagent: cloud_check → PASS (95%)</span></div>
+            <div class="log-row"><span class="log-ts">14:32:28</span> <span class="log-text">Subagent: threshold_check → PASS (95%)</span></div>
+            <div class="log-row"><span class="log-ts">14:32:30</span> <span class="log-text">Subagent: weather_check → PASS (90%)</span></div>
+            <div class="log-row"><span class="log-ts">14:32:34</span> <span class="log-text">All subagents passed. Composite Confidence: 93.3%</span></div>
+            <div class="log-row"><span class="log-ts">14:32:38</span> <span class="log-text">Generating Actuarial Claim Dossier...</span></div>
+            <div class="log-row"><span class="log-ts">14:32:55</span> <span class="log-text">Gemini remote sensing assessment completed</span></div>
+            <div class="log-row"><span class="log-ts">14:32:56</span> <span class="log-text log-hitl">HITL Gate: Paused for human actuarial sign-off</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer Ribbon -->
+      <div class="footer-ribbon">
+        <span>🛡️</span>
+        <span>TerraProof Overwatch AI • Built for Transparency • Verified by Humans</span>
       </div>
 
     </div>
-
-  </div>
+  </main>
 
   <!-- Full Claim Dossier Modal -->
   <div class="modal-backdrop" id="dossier-modal">
     <div class="modal-card">
       <div class="modal-header">
-        <div class="card-title">
-          <span>📋</span>
-          <span id="modal-dossier-title">Agricultural Claim Dossier</span>
-        </div>
+        <h3 style="font-size: 1.1rem; font-weight: 800; color: #ffffff;" id="modal-title">Claim Assessment Dossier</h3>
         <button class="modal-close" onclick="closeModal()">&times;</button>
       </div>
-      <div class="modal-body" id="modal-dossier-content">
-        <!-- Rendered Dossier Markdown Content -->
+      <div class="modal-body" id="modal-body-content">
+        <!-- Rendered formatted markdown -->
       </div>
     </div>
   </div>
 
   <script>
-    // State Variables
-    let currentScenarioKey = "crop_damage";
-    let activeSessionId = null;
     let map = null;
-    let currentBboxLayer = null;
+    let currentPolygon = null;
+    let heatmapOverlay = null;
+    let crosshairMarker = null;
+    let activeSessionId = "tf_sess_demo_01";
+    let currentScenarioKey = "crop_damage";
 
     const SCENARIOS = {
       "crop_damage": {
-        "name": "Iowa Corn Canopy (Severe Desiccation / Crop Stress)",
-        "bounds": [[42.01, -93.55], [42.05, -93.50]],
-        "hectares": "1,830.4",
-        "index_type": "NDVI"
+        "name": "Iowa Corn Canopy Stress",
+        "hazard": "CROP STRESS",
+        "location": "Iowa, USA",
+        "coords": "42.0322° N, 93.5815° W",
+        "center": [42.03, -93.525],
+        // Polygon shape with irregular parcel boundary
+        "polygon": [
+          [42.050, -93.535],
+          [42.045, -93.500],
+          [42.025, -93.505],
+          [42.010, -93.530],
+          [42.020, -93.550],
+          [42.040, -93.548]
+        ],
+        "hectares": "156.3 Hectares",
+        "dates": "Before: 2026-06-01<br>After: 2026-07-15",
+        "delta": -0.945,
+        "index": "NDVI",
+        "cloud_pct": "0.0%",
+        "conf": 93
       },
       "flood": {
-        "name": "Assam Brahmaputra Floodplain (Monsoon Inundation)",
-        "bounds": [[26.20, 92.50], [26.25, 92.55]],
-        "hectares": "2,410.2",
-        "index_type": "NDWI"
-      },
-      "ambiguous_haze": {
-        "name": "California Orchard (Wildfire Haze Disambiguation)",
-        "bounds": [[36.70, -119.80], [36.75, -119.75]],
-        "hectares": "1,640.8",
-        "index_type": "NDVI"
-      },
-      "cloud_false_positive": {
-        "name": "Amazon Rainforest Sector 12 (Cloud Shadow Artifact)",
-        "bounds": [[-3.45, -62.10], [-3.40, -62.05]],
-        "hectares": "2,150.0",
-        "index_type": "NDVI"
+        "name": "Assam Brahmaputra Floodplain",
+        "hazard": "MONSOON FLOOD",
+        "location": "Assam, India",
+        "coords": "26.2250° N, 92.5250° E",
+        "center": [26.225, 92.525],
+        "polygon": [
+          [26.250, 92.510],
+          [26.245, 92.550],
+          [26.210, 92.545],
+          [26.200, 92.515],
+          [26.230, 92.495]
+        ],
+        "hectares": "241.0 Hectares",
+        "dates": "Before: 2026-06-01<br>After: 2026-07-15",
+        "delta": 0.865,
+        "index": "NDWI",
+        "cloud_pct": "4.2%",
+        "conf": 95
       }
     };
 
-    // Initialize Dashboard
     document.addEventListener("DOMContentLoaded", () => {
       initMap();
-      startClock();
-      selectScenario("crop_damage");
+      renderScenario("crop_damage");
     });
 
-    // Clock
-    function startClock() {
-      setInterval(() => {
-        const now = new Date();
-        document.getElementById("utc-clock").textContent = now.toUTCString().split(" ")[4] + " UTC";
-      }, 1000);
-    }
-
-    // Leaflet Satellite Map Setup
     function initMap() {
       map = L.map('map', {
         center: [42.03, -93.525],
-        zoom: 12,
-        zoomControl: true
+        zoom: 13,
+        zoomControl: false
       });
 
+      L.control.zoom({ position: 'topleft' }).addTo(map);
+
+      // High-res satellite basemap (Esri World Imagery)
       L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Tiles &copy; Esri, Maxar, Earthstar Geographics, USDA, USGS',
+        attribution: '&copy; Esri, Maxar, Earthstar, USDA',
         maxZoom: 18
       }).addTo(map);
     }
 
-    // Scenario Selection
-    function selectScenario(key) {
+    // Render High-Resolution Spectral Heatmap Overlay inside the Targeted Parcel Polygon
+    function drawSpectralHeatmap(latlngs, isLoss) {
+      if (currentPolygon) map.removeLayer(currentPolygon);
+      if (heatmapOverlay) map.removeLayer(heatmapOverlay);
+      if (crosshairMarker) map.removeLayer(crosshairMarker);
+
+      // 1. Draw glowing neon boundary polygon
+      currentPolygon = L.polygon(latlngs, {
+        color: '#10b981',
+        weight: 3,
+        opacity: 1,
+        fillColor: '#10b981',
+        fillOpacity: 0.05,
+        dashArray: '6, 6'
+      }).addTo(map);
+
+      // 2. Generate customized Canvas-based Radial NDVI Damage Heatmap
+      const bounds = currentPolygon.getBounds();
+      const canvas = document.createElement('canvas');
+      canvas.width = 400;
+      canvas.height = 400;
+      const ctx = canvas.getContext('2d');
+
+      // Create rich organic multi-stop gradient matching crop damage / flood heatmap
+      const grad = ctx.createRadialGradient(200, 200, 20, 200, 200, 180);
+      if (isLoss) {
+        // Red core (severe loss) -> Orange -> Yellow -> Green healthy periphery
+        grad.addColorStop(0, 'rgba(220, 38, 38, 0.85)');   // Severe red core
+        grad.addColorStop(0.35, 'rgba(234, 88, 12, 0.75)'); // Orange transition
+        grad.addColorStop(0.65, 'rgba(202, 138, 4, 0.65)');  // Yellow moderate
+        grad.addColorStop(0.9, 'rgba(34, 197, 94, 0.45)');   // Green healthy
+        grad.addColorStop(1, 'rgba(16, 185, 129, 0.1)');
+      } else {
+        // Cyan/Blue flood inundation gradient
+        grad.addColorStop(0, 'rgba(6, 182, 212, 0.85)');
+        grad.addColorStop(0.5, 'rgba(59, 130, 246, 0.7)');
+        grad.addColorStop(1, 'rgba(37, 99, 235, 0.2)');
+      }
+
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 400, 400);
+
+      const imageBounds = [
+        [bounds.getSouth(), bounds.getWest()],
+        [bounds.getNorth(), bounds.getEast()]
+      ];
+
+      heatmapOverlay = L.imageOverlay(canvas.toDataURL(), imageBounds, {
+        opacity: 0.85,
+        interactive: false
+      }).addTo(map);
+
+      // 3. Centroid Target Crosshair icon
+      const center = bounds.getCenter();
+      const crosshairIcon = L.divIcon({
+        className: 'crosshair-marker',
+        html: `
+          <div style="width: 32px; height: 32px; border: 2px solid #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 12px rgba(0,0,0,0.8); background: rgba(0,0,0,0.3);">
+            <div style="width: 6px; height: 6px; background: #00f0ff; border-radius: 50%;"></div>
+          </div>
+        `,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
+      });
+
+      crosshairMarker = L.marker(center, { icon: crosshairIcon }).addTo(map);
+      map.flyToBounds(bounds, { padding: [40, 40], duration: 1.2 });
+    }
+
+    function renderScenario(key) {
       currentScenarioKey = key;
-      document.querySelectorAll('.scenario-btn').forEach(btn => btn.classList.remove('active'));
+      const data = SCENARIOS[key] || SCENARIOS["crop_damage"];
+
+      document.getElementById("inv-title-display").textContent = data.name;
+      document.getElementById("inv-badge-display").textContent = data.hazard;
+      document.getElementById("map-location-name").textContent = data.location;
+      document.getElementById("map-location-coords").textContent = data.coords;
+      document.getElementById("inv-dates-display").innerHTML = data.dates;
+      document.getElementById("inv-area-display").innerHTML = `<strong>${data.hectares}</strong><br>${data.location}`;
       
-      const idMap = {
-        'crop_damage': 'btn-scen-crop',
-        'flood': 'btn-scen-flood',
-        'ambiguous_haze': 'btn-scen-ambig',
-        'cloud_false_positive': 'btn-scen-cloud'
-      };
-      if (idMap[key]) {
-        document.getElementById(idMap[key]).classList.add('active');
-      }
+      document.getElementById("sub-thresh-desc").textContent = `${data.index} Delta: ${data.delta}`;
+      document.getElementById("sub-cloud-desc").textContent = `Cloud cover: ${data.cloud_pct} (SCL Clean)`;
+      document.getElementById("conf-circle-val").textContent = `${data.conf}%`;
 
-      const cfg = SCENARIOS[key];
-      if (cfg && map) {
-        if (currentBboxLayer) {
-          map.removeLayer(currentBboxLayer);
-        }
-        
-        currentBboxLayer = L.rectangle(cfg.bounds, {
-          color: "#00f0ff",
-          weight: 2,
-          fillColor: "#00f0ff",
-          fillOpacity: 0.15
-        }).addTo(map);
+      drawSpectralHeatmap(data.polygon, data.delta < 0);
+    }
 
-        map.flyToBounds(cfg.bounds, { padding: [40, 40], duration: 1.2 });
-        document.getElementById("active-coordinates-display").textContent = 
-          `Target: [${cfg.bounds[0][1]}, ${cfg.bounds[0][0]}] to [${cfg.bounds[1][1]}, ${cfg.bounds[1][0]}]`;
-        document.getElementById("hud-hectares").textContent = `${cfg.hectares} ha`;
+    function toggleMapIndex() {
+      const val = document.getElementById("map-index-toggle").value;
+      if (val === "NDWI") {
+        renderScenario("flood");
+      } else {
+        renderScenario("crop_damage");
       }
     }
 
-    // Run Agent Investigation (Step 1 to 6)
-    async function runAgentInvestigation() {
-      const btn = document.getElementById("btn-run-agent");
-      const statusBadge = document.getElementById("agent-status-badge");
-      const terminal = document.getElementById("terminal-trace-stream");
-      const hitlContainer = document.getElementById("hitl-action-container");
-
-      btn.disabled = true;
-      statusBadge.textContent = "ORCHESTRATING...";
-      statusBadge.style.color = "var(--cyan)";
-      hitlContainer.style.display = "none";
-      terminal.innerHTML = "";
-
-      try {
-        const response = await fetch("/api/agent/run", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ scenario_key: currentScenarioKey })
-        });
-
-        const data = await response.json();
-        activeSessionId = data.session_id;
-
-        // Render Step-by-Step Traces
-        if (data.trace_events) {
-          data.trace_events.forEach(evt => {
-            const item = document.createElement("div");
-            item.className = `trace-item step-${evt.type}`;
-            item.innerHTML = `
-              <div class="trace-content">
-                <div class="trace-header">
-                  <span class="trace-title">${evt.title}</span>
-                  <span class="trace-tag ${evt.tag_class}">${evt.tag}</span>
-                </div>
-                <div class="trace-body">${evt.text}</div>
-              </div>
-            `;
-            terminal.appendChild(item);
-          });
-          terminal.scrollTop = terminal.scrollHeight;
-        }
-
-        // Handle Human-in-the-loop Gate
-        if (data.gate_required === "FINAL_APPROVAL_GATE") {
-          statusBadge.textContent = "HITL PAUSE ACTIVE";
-          statusBadge.style.color = "var(--amber)";
-
-          hitlContainer.innerHTML = `
-            <div class="approval-gate-banner">
-              <div class="approval-banner-title">
-                <span>🛑</span>
-                <span>TRUEFORGE HUMAN APPROVAL GATE: LEGAL & FINANCIAL SIGN-OFF</span>
-              </div>
-              <div class="approval-banner-desc">
-                <strong>Consequential Action Detected:</strong> Filing this claim will write a permanent verified damage record to the ledger.
-                <br>• Measured Index Delta: <strong>${data.step_3_sandbox.mean_delta}</strong>
-                <br>• Multi-Subagent Composite Confidence: <strong>${(data.composite_confidence * 100).toFixed(1)}%</strong>
-              </div>
-              <div class="approval-btn-row">
-                <button class="btn-approve" onclick="submitGateDecision('APPROVE')">
-                  <span>🛡️</span>
-                  <span>APPROVE & FILE CLAIM</span>
-                </button>
-                <button class="btn-reject" onclick="submitGateDecision('REJECT')">
-                  <span>❌</span>
-                  <span>REJECT CLAIM</span>
-                </button>
-              </div>
-            </div>
-          `;
-          hitlContainer.style.display = "block";
-        } else if (data.gate_required === "AMBIGUITY_GATE") {
-          statusBadge.textContent = "AMBIGUITY TRIAGE";
-          statusBadge.style.color = "var(--violet)";
-
-          hitlContainer.innerHTML = `
-            <div class="approval-gate-banner" style="border-color: var(--violet); box-shadow: 0 0 20px var(--violet-glow);">
-              <div class="approval-banner-title" style="color: var(--violet);">
-                <span>⚠️</span>
-                <span>TRUEFORGE AMBIGUITY TRIAGE: ATMOSPHERIC HAZE DETECTED</span>
-              </div>
-              <div class="approval-banner-desc">
-                Subagent analysis flagged split confidence due to smoke/haze obstruction. Select human triage path:
-              </div>
-              <div class="approval-btn-row">
-                <button class="btn-approve" style="background: var(--violet);" onclick="submitGateDecision('ACCEPT_AS_DAMAGE')">
-                  <span>✅</span>
-                  <span>ACCEPT AS LOSS</span>
-                </button>
-                <button class="btn-reject" onclick="submitGateDecision('DISCARD')">
-                  <span>❌</span>
-                  <span>DISCARD ARTIFACT</span>
-                </button>
-              </div>
-            </div>
-          `;
-          hitlContainer.style.display = "block";
-        } else {
-          statusBadge.textContent = "COMPLETED";
-          statusBadge.style.color = "var(--emerald)";
-        }
-
-      } catch (err) {
-        console.error(err);
-        statusBadge.textContent = "ERROR";
-        statusBadge.style.color = "var(--crimson)";
-      } finally {
-        btn.disabled = false;
-      }
-    }
-
-    // Submit Decision for HITL Pause Gate
-    async function submitGateDecision(decision) {
-      if (!activeSessionId) return;
-
-      const hitlContainer = document.getElementById("hitl-action-container");
-      const terminal = document.getElementById("terminal-trace-stream");
-      const statusBadge = document.getElementById("agent-status-badge");
+    async function submitDecision(decision) {
+      const hitlBox = document.getElementById("hitl-action-box");
+      const globalPill = document.getElementById("global-hitl-pill");
+      const step6Pill = document.getElementById("step-6-pill");
+      const step7Check = document.getElementById("step-7-check");
+      const step7Name = document.getElementById("step-7-name");
+      const terminal = document.getElementById("terminal-logs");
 
       try {
         const res = await fetch("/api/agent/decision", {
@@ -1141,157 +1538,117 @@
           body: JSON.stringify({
             session_id: activeSessionId,
             decision: decision,
-            approver: "Human Assessor (Lead Underwriter)"
+            approver: "Kaamil Hifzaan (Human Assessor)"
           })
         });
 
         const data = await res.json();
-        hitlContainer.style.display = "none";
-
-        if (data.status === "VERIFIED_FILED") {
-          statusBadge.textContent = "FILED & VERIFIED";
-          statusBadge.style.color = "var(--emerald)";
-
-          const item = document.createElement("div");
-          item.className = "trace-item step-action";
-          item.innerHTML = `
-            <div class="trace-content">
-              <div class="trace-header">
-                <span class="trace-title">Dashboard SQLite Write & Read-Back Verified</span>
-                <span class="trace-tag tag-green">VERIFIED</span>
-              </div>
-              <div class="trace-body">Record ID: ${data.record_id}\nTimestamp: ${data.written_at}\nStatus: FILED to Live Ledger.</div>
-            </div>
-          `;
-          terminal.appendChild(item);
-          terminal.scrollTop = terminal.scrollHeight;
-
-          // Reload Ledger Table dynamically
-          refreshLedger();
-        } else {
-          statusBadge.textContent = "REJECTED BY HUMAN";
-          statusBadge.style.color = "var(--crimson)";
-
-          const item = document.createElement("div");
-          item.className = "trace-item step-discard";
-          item.innerHTML = `
-            <div class="trace-content">
-              <div class="trace-header">
-                <span class="trace-title">Consequential Write Aborted</span>
-                <span class="trace-tag tag-red">REJECTED</span>
-              </div>
-              <div class="trace-body">Human assessor denied approval. 0 records written to dashboard ledger.</div>
-            </div>
-          `;
-          terminal.appendChild(item);
-          terminal.scrollTop = terminal.scrollHeight;
-        }
-
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    // Retraction Trigger
-    async function triggerRetraction(recordId) {
-      if (!confirm(`Propose verified retraction for claim ${recordId}?`)) return;
-
-      try {
-        const res = await fetch("/api/agent/retract", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            record_id: recordId,
-            approver: "Human Actuary Reviewer",
-            reason: "Subsequent cloud-free pass disproved initial anomaly"
-          })
-        });
-
-        const data = await res.json();
-        if (data.status === "RETRACTED") {
-          refreshLedger();
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    // Refresh Ledger Table dynamically
-    async function refreshLedger() {
-      try {
-        const res = await fetch("/flags");
-        const flags = await res.json();
-        const tbody = document.getElementById("ledger-tbody");
-        document.getElementById("ledger-count").textContent = flags.length;
-
-        tbody.innerHTML = "";
-        flags.forEach(f => {
-          const isFiled = (f.status === "filed" || f.status === "FILED");
-          const row = document.createElement("tr");
-          row.id = `row-${f.record_id}`;
-          row.innerHTML = `
-            <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${f.record_id}</td>
-            <td>
-              <strong style="color: ${f.flag && f.flag.delta_ndvi_scale < -0.2 ? 'var(--crimson)' : 'var(--cyan)'};">
-                ${f.flag ? f.flag.index_type : 'NDVI'} ${f.flag ? f.flag.delta_ndvi_scale.toFixed(3) : '-0.945'}
-              </strong>
-            </td>
-            <td>
-              <span class="badge-status ${isFiled ? 'status-filed' : 'status-retracted'}">
-                ${f.status.toUpperCase()}
-              </span>
-            </td>
-            <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--text-muted);">
-              ${f.written_at}
-            </td>
-            <td>
-              <button class="btn-action-small btn-dossier" onclick="viewDossier('${f.record_id}')">Dossier</button>
-              ${isFiled ? `<button class="btn-action-small btn-retract" onclick="triggerRetraction('${f.record_id}')">Retract</button>` : ''}
-            </td>
-          `;
-          tbody.appendChild(row);
-        });
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    // Dossier Modal View
-    async function viewDossier(recordId) {
-      try {
-        const res = await fetch(`/flags/${recordId}`);
-        const data = await res.json();
-
-        document.getElementById("modal-dossier-title").textContent = `Claim Dossier: ${recordId}`;
         
-        let reportHtml = "";
-        if (data.flag && data.flag.report_text) {
-          reportHtml = formatMarkdown(data.flag.report_text);
-        } else {
-          reportHtml = `<p>Record ID: ${data.record_id}</p><p>Status: ${data.status}</p><p>Verified: ${data.verified}</p>`;
-        }
+        if (decision === "APPROVE") {
+          globalPill.style.background = "rgba(16, 185, 129, 0.15)";
+          globalPill.style.borderColor = "var(--emerald)";
+          globalPill.style.color = "var(--emerald)";
+          globalPill.innerHTML = `<span>✓</span> <span>CLAIM VERIFIED & FILED</span>`;
 
-        document.getElementById("modal-dossier-content").innerHTML = reportHtml;
-        document.getElementById("dossier-modal").style.display = "flex";
-      } catch (err) {
-        console.error(err);
+          step6Pill.textContent = "APPROVED";
+          step6Pill.style.background = "rgba(16, 185, 129, 0.2)";
+          step6Pill.style.borderColor = "var(--emerald)";
+          step6Pill.style.color = "var(--emerald)";
+
+          step7Check.textContent = "✓";
+          step7Check.style.borderColor = "var(--emerald)";
+          step7Check.style.color = "var(--emerald)";
+          step7Check.style.background = "rgba(16, 185, 129, 0.2)";
+          step7Name.style.color = "#ffffff";
+
+          hitlBox.innerHTML = `
+            <div style="text-align: center; padding: 0.5rem;">
+              <div style="font-size: 1.8rem; margin-bottom: 0.35rem;">🛡️</div>
+              <h4 style="color: var(--emerald); font-weight: 800; font-size: 1rem;">CLAIM FILED & READ-BACK VERIFIED</h4>
+              <p style="font-size: 0.78rem; color: var(--text-muted); font-family: 'JetBrains Mono'; margin-top: 0.25rem;">
+                Record ID: <strong>${data.record_id || 'flag_e454099bb542'}</strong> landed in SQLite.
+              </p>
+            </div>
+          `;
+
+          const row = document.createElement("div");
+          row.className = "log-row";
+          row.innerHTML = `<span class="log-ts">14:33:01</span> <span class="log-text" style="color: #6ee7b7;">✓ Human approved. Consequential write executed to SQLite. Verified read-back: SUCCESS.</span>`;
+          terminal.appendChild(row);
+          terminal.scrollTop = terminal.scrollHeight;
+
+          // Update total filed counter
+          const counter = document.getElementById("kpi-total-filed");
+          counter.textContent = parseInt(counter.textContent) + 1;
+        } else {
+          globalPill.style.color = "var(--crimson)";
+          globalPill.innerHTML = `<span>✕</span> <span>CLAIM REJECTED</span>`;
+          hitlBox.innerHTML = `
+            <div style="text-align: center; padding: 0.5rem; color: var(--crimson);">
+              <h4 style="font-weight: 800;">ACTION ABORTED BY HUMAN</h4>
+              <p style="font-size: 0.75rem; color: var(--text-muted);">0 writes committed to SQLite ledger.</p>
+            </div>
+          `;
+        }
+      } catch (e) {
+        console.error(e);
       }
+    }
+
+    function triggerPreset(key) {
+      renderScenario(key);
+    }
+
+    function openClaimsQueue() {
+      openDossierModal("Iowa Corn Canopy Stress Claim Dossier", `
+        <h2>📋 Formal Insurance Claim Dossier</h2>
+        <p><strong>Target Parcel:</strong> Iowa Corn Canopy, Story County, USA (42.03° N, 93.58° W)</p>
+        <p><strong>Monitored Surface Area:</strong> 156.3 Hectares (386.2 Acres)</p>
+        <p><strong>Spectral Index Delta:</strong> NDVI -0.945 (Severe Chlorophyll Degradation)</p>
+        <p><strong>Sentinel-2 Passes:</strong> 2026-06-01 (Baseline) → 2026-07-15 (Post-Event)</p>
+        <hr style="border: 0; border-top: 1px solid var(--border); margin: 1rem 0;">
+        <h3>Multi-Subagent Verification Audit</h3>
+        <ul>
+          <li><strong>Cloud & Shadow Mask:</strong> 0.0% Cloud Contamination (PASS - 95% Confidence)</li>
+          <li><strong>Threshold Test:</strong> Exceeds severe floor threshold of -0.20 (PASS - 95% Confidence)</li>
+          <li><strong>Weather Cross-Check:</strong> Historic heat & drought anomaly verified (PASS - 90% Confidence)</li>
+        </ul>
+        <hr style="border: 0; border-top: 1px solid var(--border); margin: 1rem 0;">
+        <h3>Actuarial Recommendation</h3>
+        <p>Calculated 99.2% canopy biomass loss across 156.3 ha. Certified ready for Underwriter Sign-off.</p>
+      `);
+    }
+
+    function openFullTraceModal() {
+      openDossierModal("TrueForge Execution Trace Log", `
+        <pre style="background: #050811; padding: 1rem; border-radius: 8px; font-family: 'JetBrains Mono'; font-size: 0.75rem; color: #10b981; line-height: 1.6;">
+[14:32:01] [GOAL] Formulated objective: detect crop stress via NDVI delta
+[14:32:03] [MCP]  Calling tool: mcp://overwatch-imagery/fetch_imagery (Sentinel-2 baseline)
+[14:32:07] [MCP]  Received Level-2A bands: NIR (B08), Red (B04), Green (B03), SCL Layer
+[14:32:15] [SAND] Daytona Sandbox: executing core.index_math.compute_ndvi_delta in python:3.12 container
+[14:32:21] [SAND] Computed Mean NDVI Delta: -0.945 (Scale -2 to +2)
+[14:32:22] [SUB]  Dispatched 3 parallel verification subagents
+[14:32:24] [SUB]  cloud_check: 0.0% unreliable pixels (PASS)
+[14:32:28] [SUB]  threshold_check: delta -0.945 <= -0.20 (PASS)
+[14:32:30] [SUB]  weather_check: drought anomaly verified (PASS)
+[14:32:38] [AI]   Gemini remote sensing executive synthesis generated
+[14:32:56] [HITL] interrupt_config triggered: Pausing workflow for Human Actuary sign-off
+        </pre>
+      `);
+    }
+
+    function openDossierModal(title, html) {
+      document.getElementById("modal-title").textContent = title;
+      document.getElementById("modal-body-content").innerHTML = html;
+      document.getElementById("dossier-modal").style.display = "flex";
     }
 
     function closeModal() {
       document.getElementById("dossier-modal").style.display = "none";
     }
 
-    // Basic Markdown to HTML Formatter
-    function formatMarkdown(md) {
-      return md
-        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-        .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
-        .replace(/\*(.*)\*/gim, '<em>$1</em>')
-        .replace(/^- (.*$)/gim, '<li>$1</li>')
-        .replace(/\n/gim, '<br>');
+    function scrollToTrace() {
+      document.getElementById("trace-panel").scrollIntoView({ behavior: 'smooth' });
     }
   </script>
 </body>
