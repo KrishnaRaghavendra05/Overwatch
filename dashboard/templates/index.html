@@ -3,42 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OVERWATCH — TrueForge Geospatial Insurance Claim Assessment Agent</title>
+  <title>OVERWATCH — Autonomous Remote Sensing & Human-Gated Insurance Claim Agent</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
   <style>
     :root {
-      --bg: #090d16;
-      --card-bg: rgba(17, 24, 39, 0.94);
-      --border: rgba(255, 255, 255, 0.1);
-      --accent: #10b981;
-      --accent-glow: rgba(16, 185, 129, 0.3);
-      --primary: #3b82f6;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --purple: #8b5cf6;
-      --text: #f3f4f6;
-      --text-muted: #9ca3af;
+      --bg-primary: #060911;
+      --bg-secondary: #0a0f1d;
+      --bg-card: rgba(14, 21, 37, 0.85);
+      --bg-card-hover: rgba(20, 30, 53, 0.95);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(0, 240, 255, 0.25);
+      
+      --cyan: #00f0ff;
+      --cyan-glow: rgba(0, 240, 255, 0.35);
+      --emerald: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.35);
+      --violet: #8b5cf6;
+      --violet-glow: rgba(139, 92, 246, 0.35);
+      --amber: #f59e0b;
+      --amber-glow: rgba(245, 158, 11, 0.35);
+      --crimson: #ff3366;
+      --crimson-glow: rgba(255, 51, 102, 0.35);
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background-color: var(--bg);
-      color: var(--text);
+      background-color: var(--bg-primary);
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(0, 240, 255, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(139, 92, 246, 0.04) 0%, transparent 40%);
+      color: var(--text-main);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow-x: hidden;
     }
 
+    /* Top Navigation Header */
     header {
-      background: rgba(13, 17, 28, 0.96);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 0.8rem 2rem;
+      background: rgba(8, 13, 24, 0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.75rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -47,1010 +63,1235 @@
       z-index: 1000;
     }
 
-    .brand {
+    .brand-section {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-    }
-    .brand-icon {
-      font-size: 1.35rem;
-      background: linear-gradient(135deg, #10b981, #3b82f6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-weight: 800;
-      letter-spacing: 1px;
-    }
-    .badge-harness {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      background: rgba(59, 130, 246, 0.15);
-      border: 1px solid rgba(59, 130, 246, 0.4);
-      color: #60a5fa;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      text-transform: uppercase;
-      font-weight: 600;
+      gap: 1.25rem;
     }
 
-    .main-grid {
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+    }
+
+    .radar-icon {
+      width: 28px;
+      height: 28px;
+      border: 2px solid var(--cyan);
+      border-radius: 50%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px var(--cyan-glow);
+    }
+    .radar-icon::before {
+      content: '';
+      width: 10px;
+      height: 10px;
+      background: var(--emerald);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--emerald);
+    }
+    .radar-icon::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 1px solid var(--cyan);
+      animation: pulse-ring 2s infinite ease-out;
+    }
+
+    @keyframes pulse-ring {
+      0% { transform: scale(0.8); opacity: 1; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+
+    .brand-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      background: linear-gradient(135deg, #ffffff 30%, var(--cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .runtime-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      color: var(--cyan);
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .header-telemetry {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .telemetry-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      padding: 0.3rem 0.75rem;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--emerald);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--emerald);
+      animation: blink 1.5s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Main Grid Layout */
+    .dashboard-layout {
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
+      grid-template-columns: 1.15fr 0.85fr;
       gap: 1.5rem;
-      padding: 1.25rem 2rem;
+      padding: 1.5rem 2rem;
       flex: 1;
     }
 
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
+    @media (max-width: 1200px) {
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Glass Cards */
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
       backdrop-filter: blur(16px);
-      padding: 1.2rem;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
       display: flex;
       flex-direction: column;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .glass-card:hover {
+      border-color: rgba(255, 255, 255, 0.14);
     }
 
     .card-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(255, 255, 255, 0.015);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.85rem;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 0.65rem;
     }
 
     .card-title {
-      font-size: 0.88rem;
-      font-weight: 600;
-      text-transform: uppercase;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
       letter-spacing: 0.5px;
-      color: var(--text-muted);
+      text-transform: uppercase;
+      color: var(--text-main);
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.6rem;
+    }
+
+    .card-subtitle {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .card-body {
+      padding: 1.25rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* Satellite Map Viewport */
+    #map-container {
+      position: relative;
+      height: 480px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
     }
 
     #map {
-      height: 480px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      position: relative;
+      width: 100%;
+      height: 100%;
+      background: #0b111e;
     }
 
-    /* Target Picker Form Controls */
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.6rem;
-      margin-bottom: 0.85rem;
-      background: rgba(0, 0, 0, 0.25);
-      padding: 0.85rem;
-      border-radius: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    .form-group {
+    .map-overlay-hud {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 500;
+      background: rgba(6, 11, 22, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-accent);
+      border-radius: 8px;
+      padding: 0.5rem 0.85rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--cyan);
       display: flex;
       flex-direction: column;
       gap: 0.25rem;
-    }
-    .form-group label {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      font-weight: 500;
-      text-transform: uppercase;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .form-control {
-      background: #0d1322;
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 0.45rem 0.6rem;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      font-family: inherit;
-    }
-    .form-control:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
     }
 
-    .btn-run-agent {
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: white;
-      border: none;
-      padding: 0.65rem 1rem;
-      border-radius: 6px;
-      font-weight: 600;
-      font-size: 0.85rem;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.5rem;
-      transition: all 0.2s;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-    }
-    .btn-run-agent:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
-    }
-
-    /* Live TrueForge Agent Thought & Reasoning Activity Feed */
-    .agent-feed-card {
-      background: #050811;
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      border-radius: 6px;
-      padding: 0.9rem;
-      margin: 0.85rem 0;
-      display: none;
-      flex-direction: column;
-      gap: 0.65rem;
-      max-height: 380px;
-      overflow-y: auto;
-    }
-    .feed-header {
+    .map-footer-telemetry {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      padding-bottom: 0.4rem;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.78rem;
-    }
-    .agent-status-pulse {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      color: #60a5fa;
-      font-weight: 600;
-    }
-    .pulse-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #3b82f6;
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse {
-      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
-      70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(59, 130, 246, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+      color: var(--text-muted);
+      padding: 0.5rem 0.25rem 0 0.25rem;
     }
 
-    .event-card {
-      background: rgba(13, 19, 33, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-left: 3px solid var(--primary);
-      border-radius: 4px;
-      padding: 0.6rem 0.8rem;
+    /* Scenario Selector Grid */
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+
+    .scenario-btn {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 0.85rem;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .scenario-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--border-accent);
+      transform: translateY(-2px);
+    }
+    .scenario-btn.active {
+      background: rgba(0, 240, 255, 0.06);
+      border-color: var(--cyan);
+      box-shadow: 0 0 16px var(--cyan-glow);
+    }
+
+    .scenario-btn-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .scenario-icon {
+      font-size: 1.1rem;
+    }
+    .scenario-tag {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.76rem;
-      animation: fadeIn 0.3s ease-in;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+    }
+    .tag-drought { background: rgba(245, 158, 11, 0.15); color: var(--amber); border: 1px solid rgba(245, 158, 11, 0.4); }
+    .tag-flood { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+    .tag-ambiguous { background: rgba(139, 92, 246, 0.15); color: var(--violet); border: 1px solid rgba(139, 92, 246, 0.4); }
+    .tag-cloud { background: rgba(255, 51, 102, 0.15); color: var(--crimson); border: 1px solid rgba(255, 51, 102, 0.4); }
+
+    .scenario-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .scenario-desc {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+
+    /* Action Trigger Button */
+    .btn-launch {
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      border: none;
+      border-radius: 8px;
+      color: #ffffff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 0.9rem 1.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      box-shadow: 0 4px 20px rgba(0, 114, 255, 0.4);
+      transition: all 0.2s;
+    }
+    .btn-launch:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(0, 198, 255, 0.6);
+    }
+    .btn-launch:active {
+      transform: translateY(0);
+    }
+    .btn-launch:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Stepper & Execution Timeline */
+    .execution-terminal {
+      background: rgba(5, 8, 16, 0.95);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    .trace-item {
+      display: flex;
+      gap: 0.85rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.015);
+      border-left: 3px solid var(--border-subtle);
+      font-size: 0.8rem;
+      animation: fadeIn 0.3s ease-in-out;
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(4px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .event-card.thought {
-      border-left-color: var(--purple);
-      background: rgba(139, 92, 246, 0.05);
-    }
-    .event-card.action {
-      border-left-color: var(--primary);
-      background: rgba(59, 130, 246, 0.05);
-    }
-    .event-card.sandbox {
-      border-left-color: #06b6d4;
-      background: rgba(6, 182, 212, 0.05);
-    }
-    .event-card.subagents {
-      border-left-color: var(--accent);
-      background: rgba(16, 185, 129, 0.05);
-    }
-    .event-card.interrupt {
-      border-left-color: var(--warning);
-      background: rgba(245, 158, 11, 0.08);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-    }
-    .event-card.discard {
-      border-left-color: var(--danger);
-      background: rgba(239, 68, 68, 0.08);
-    }
+    .trace-item.step-thought { border-left-color: var(--violet); }
+    .trace-item.step-action { border-left-color: var(--cyan); }
+    .trace-item.step-sandbox { border-left-color: #38bdf8; }
+    .trace-item.step-subagents { border-left-color: var(--emerald); }
+    .trace-item.step-interrupt { border-left-color: var(--amber); background: rgba(245, 158, 11, 0.06); }
+    .trace-item.step-discard { border-left-color: var(--crimson); background: rgba(255, 51, 102, 0.06); }
 
-    .event-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.25rem;
-    }
-    .event-title {
-      font-weight: 600;
-      color: #e5e7eb;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-    .step-tag {
-      font-size: 0.65rem;
-      padding: 0.1rem 0.35rem;
-      border-radius: 3px;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    .tag-blue { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
-    .tag-purple { background: rgba(139, 92, 246, 0.2); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.4); }
-    .tag-green { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
-    .tag-yellow { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
-    .tag-red { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
-
-    .event-body {
-      color: #9ca3af;
-      line-height: 1.45;
-      white-space: pre-wrap;
-    }
-
-    .table-container {
-      overflow-x: auto;
+    .trace-content {
       flex: 1;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.82rem;
-    }
-    th, td {
-      padding: 0.65rem 0.75rem;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-    }
-    th {
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-muted);
-      font-weight: 500;
-      font-size: 0.7rem;
-      text-transform: uppercase;
-    }
-    tr:hover { background: rgba(255, 255, 255, 0.02); }
-
-    .status-badge {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      padding: 0.18rem 0.5rem;
-      border-radius: 4px;
-      font-weight: 600;
-      display: inline-block;
-    }
-    .status-FILED { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; }
-    .status-RETRACTED { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; }
-
-    .btn-action {
-      background: #2563eb;
-      color: white;
-      border: none;
-      padding: 0.25rem 0.55rem;
-      border-radius: 4px;
-      font-size: 0.72rem;
-      cursor: pointer;
-      font-weight: 500;
-      transition: background 0.2s;
-    }
-    .btn-action:hover { background: #1d4ed8; }
-    .btn-danger { background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; }
-    .btn-danger:hover { background: rgba(239, 68, 68, 0.4); }
-
-    /* TrueForge Gate Modal */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(8px);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 2000;
-    }
-    .modal {
-      background: #111827;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      width: 92%;
-      max-width: 740px;
-      max-height: 88vh;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85);
+      gap: 0.25rem;
     }
-    .modal-header {
-      padding: 0.9rem 1.4rem;
-      border-bottom: 1px solid var(--border);
+    .trace-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #0b0f19;
     }
-    .modal-body {
-      padding: 1.25rem;
-      overflow-y: auto;
-      font-family: 'JetBrains Mono', monospace;
+    .trace-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
       font-size: 0.82rem;
-      line-height: 1.6;
+      color: var(--text-main);
+    }
+    .trace-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .tag-purple { background: rgba(139, 92, 246, 0.2); color: var(--violet); }
+    .tag-blue { background: rgba(0, 240, 255, 0.2); color: var(--cyan); }
+    .tag-green { background: rgba(16, 185, 129, 0.2); color: var(--emerald); }
+    .tag-yellow { background: rgba(245, 158, 11, 0.2); color: var(--amber); }
+    .tag-red { background: rgba(255, 51, 102, 0.2); color: var(--crimson); }
+
+    .trace-body {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      color: var(--text-muted);
       white-space: pre-wrap;
-      background: #090d16;
-      color: #e5e7eb;
+      line-height: 1.4;
     }
-    .modal-footer {
-      padding: 0.9rem 1.4rem;
-      border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: flex-end;
-      gap: 0.75rem;
-      background: #0b0f19;
+
+    /* Subagent Scorecard Box */
+    .subagent-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.6rem;
+      margin-top: 0.4rem;
     }
-    .btn-approve {
-      background: #10b981;
-      color: #fff;
-      border: none;
-      padding: 0.6rem 1.25rem;
+    .subagent-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
       border-radius: 6px;
+      padding: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .subagent-name {
+      font-size: 0.68rem;
+      color: var(--text-dim);
       font-weight: 600;
-      cursor: pointer;
+      text-transform: uppercase;
+    }
+    .subagent-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    /* Human Approval Gate Action Banner */
+    .approval-gate-banner {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(245, 158, 11, 0.04));
+      border: 2px solid var(--amber);
+      border-radius: 10px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      box-shadow: 0 0 24px var(--amber-glow);
+      animation: pulse-border 2s infinite;
+    }
+    @keyframes pulse-border {
+      0%, 100% { box-shadow: 0 0 12px rgba(245, 158, 11, 0.2); }
+      50% { box-shadow: 0 0 28px rgba(245, 158, 11, 0.45); }
+    }
+
+    .approval-banner-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--amber);
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-size: 0.85rem;
     }
-    .btn-approve:hover { background: #059669; }
-    .btn-reject {
-      background: #374151;
-      color: #f3f4f6;
-      border: 1px solid var(--border);
-      padding: 0.6rem 1.25rem;
+
+    .approval-banner-desc {
+      font-size: 0.82rem;
+      color: var(--text-main);
+      line-height: 1.45;
+    }
+
+    .approval-btn-row {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .btn-approve {
+      flex: 1;
+      background: linear-gradient(135deg, #059669, #10b981);
+      border: none;
       border-radius: 6px;
-      font-weight: 500;
+      padding: 0.75rem;
+      color: #ffffff;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
       cursor: pointer;
-      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      box-shadow: 0 4px 14px var(--emerald-glow);
+      transition: all 0.2s;
     }
-    .btn-reject:hover { background: #4b5563; }
+    .btn-approve:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--emerald-glow);
+    }
+    .btn-reject {
+      flex: 0.8;
+      background: rgba(255, 51, 102, 0.1);
+      border: 1px solid var(--crimson);
+      border-radius: 6px;
+      padding: 0.75rem;
+      color: var(--crimson);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-reject:hover {
+      background: var(--crimson);
+      color: #ffffff;
+    }
+
+    /* Ledger Table */
+    .ledger-table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+    table.ledger-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    table.ledger-table th {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      color: var(--text-dim);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    table.ledger-table td {
+      padding: 0.75rem 0.85rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+    }
+    table.ledger-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .badge-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .status-filed {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--emerald);
+      color: var(--emerald);
+    }
+    .status-retracted {
+      background: rgba(255, 51, 102, 0.15);
+      border: 1px solid var(--crimson);
+      color: var(--crimson);
+    }
+
+    .btn-action-small {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      padding: 0.25rem 0.55rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-dossier {
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+    }
+    .btn-dossier:hover {
+      background: var(--cyan);
+      color: #060911;
+    }
+    .btn-retract {
+      background: rgba(255, 51, 102, 0.1);
+      border: 1px solid var(--crimson);
+      color: var(--crimson);
+      margin-left: 0.35rem;
+    }
+    .btn-retract:hover {
+      background: var(--crimson);
+      color: #ffffff;
+    }
+
+    /* Dossier Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 6, 15, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .modal-card {
+      background: #0c1322;
+      border: 1px solid var(--border-accent);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 800px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8);
+    }
+    .modal-header {
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+    .modal-body h1, .modal-body h2 {
+      font-family: 'Outfit', sans-serif;
+      margin: 1rem 0 0.5rem 0;
+      color: var(--cyan);
+    }
+    .modal-body ul {
+      margin-left: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .modal-close:hover {
+      color: #ffffff;
+    }
   </style>
 </head>
 <body>
+
+  <!-- Top Navigation & Live Telemetry -->
   <header>
-    <div class="brand">
-      <span class="brand-icon">🛰️ OVERWATCH</span>
-      <span class="badge-harness">TrueForge Agent Runtime</span>
+    <div class="brand-section">
+      <a href="/" class="logo-container">
+        <div class="radar-icon"></div>
+        <span class="brand-title">OVERWATCH</span>
+      </a>
+      <div class="runtime-badge">
+        <span>⚡ TRUEFORGE AGENT HARNESS</span>
+      </div>
     </div>
-    <div style="display: flex; gap: 1rem; align-items: center;">
-      <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--accent);">● HARNESS ACTIVE</span>
-      <button class="btn-action" onclick="location.reload()" style="background: #374151; font-size: 0.75rem;">Refresh</button>
+    
+    <div class="header-telemetry">
+      <div class="telemetry-pill">
+        <span class="live-dot"></span>
+        <span>SENTINEL-2 L2A LIVE</span>
+      </div>
+      <div class="telemetry-pill">
+        <span>🛡️ HITL GATE: STRICT</span>
+      </div>
+      <div class="telemetry-pill">
+        <span id="utc-clock">00:00:00 UTC</span>
+      </div>
     </div>
   </header>
 
-  <div class="main-grid">
-    <!-- Left Column: Map & Active Spatial Targets -->
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title"><span>🗺️</span> Sentinel-2 Satellite Observation Grid</div>
-        <span id="mapStatus" style="font-size: 0.75rem; color: #60a5fa;">Click anywhere on map to target area</span>
-      </div>
-      <div id="map"></div>
-      <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.5rem; display: flex; justify-content: space-between;">
-        <span>Tip: Scroll & click on agricultural regions or select presets on the right</span>
-        <span id="selectedCoordsText" style="font-family: 'JetBrains Mono', monospace; color: #34d399;">Selected: [42.01, -93.55] to [42.05, -93.50]</span>
-      </div>
-    </div>
-
-    <!-- Right Column: Hierarchical Location, Date Pickers & TrueForge Console -->
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title"><span>📋</span> Target Claim Area & Date Window</div>
-        <span style="font-size: 0.75rem; color: var(--accent);">Multi-Temporal Analysis</span>
-      </div>
-
-      <!-- Quick 1-Click Scenario Buttons -->
-      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; margin-bottom: 0.85rem;">
-        <button class="btn-action" style="background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.4); color: #34d399; padding: 0.45rem 0.2rem; font-size: 0.72rem;" onclick="runScenarioDirectly('crop_damage')">
-          🌾 Iowa Corn (Drought)
-        </button>
-        <button class="btn-action" style="background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.4); color: #60a5fa; padding: 0.45rem 0.2rem; font-size: 0.72rem;" onclick="runScenarioDirectly('flood')">
-          🌊 Assam (Flood)
-        </button>
-        <button class="btn-action" style="background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.4); color: #fbbf24; padding: 0.45rem 0.2rem; font-size: 0.72rem;" onclick="runScenarioDirectly('ambiguous_haze')">
-          ⚠️ Fresno (Haze Triage)
-        </button>
-        <button class="btn-action" style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); color: #f87171; padding: 0.45rem 0.2rem; font-size: 0.72rem;" onclick="runScenarioDirectly('cloud_false_positive')">
-          ☁️ Amazon (Cloud Check)
-        </button>
-      </div>
-
-      <!-- Location Presets: Country > State > City/Sector -->
-      <div class="form-grid">
-        <div class="form-group">
-          <label>1. Country</label>
-          <select id="countrySelect" class="form-control" onchange="onCountryChange()">
-            <option value="USA">United States</option>
-            <option value="IND">India</option>
-            <option value="BRA">Brazil</option>
-            <option value="AUS">Australia</option>
-            <option value="CUSTOM">Custom Lat/Lon Coordinates</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>2. State / Province</label>
-          <select id="stateSelect" class="form-control" onchange="onStateChange()">
-            <option value="Iowa">Iowa</option>
-            <option value="California">California</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>3. Region / Sector</label>
-          <select id="regionSelect" class="form-control" onchange="onRegionChange()">
-            <option value="0">Story County Cornfield (Drought Stress)</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>4. Insurance Hazard Type</label>
-          <select id="hazardSelect" class="form-control">
-            <option value="crop_stress">🌾 Crop Drought & Biomass Loss (NDVI)</option>
-            <option value="flood">🌊 Riverine Inundation & Flood Extent (NDWI)</option>
-            <option value="wildfire">🔥 Wildfire Smoke & Scorched Soil (NDVI)</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Baseline Date (Before)</label>
-          <input type="date" id="startDate" class="form-control" value="2026-06-01">
-        </div>
-
-        <div class="form-group">
-          <label>Assessment Date (After)</label>
-          <input type="date" id="endDate" class="form-control" value="2026-07-15">
-        </div>
-      </div>
-
-
-      <!-- Target Bounding Box Fields (Auto-filled or manual) -->
-      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; margin-bottom: 0.85rem;">
-        <div class="form-group">
-          <label>Min Lat</label>
-          <input type="number" step="0.0001" id="minLat" class="form-control" value="42.0100">
-        </div>
-        <div class="form-group">
-          <label>Min Lon</label>
-          <input type="number" step="0.0001" id="minLon" class="form-control" value="-93.5500">
-        </div>
-        <div class="form-group">
-          <label>Max Lat</label>
-          <input type="number" step="0.0001" id="maxLat" class="form-control" value="42.0500">
-        </div>
-        <div class="form-group">
-          <label>Max Lon</label>
-          <input type="number" step="0.0001" id="maxLon" class="form-control" value="-93.5000">
-        </div>
-      </div>
-
-      <button class="btn-run-agent" id="runAgentBtn" onclick="runCustomAgentAssessment()">
-        <span>🛰️</span> Run TrueForge Claim Assessment
-      </button>
-
-      <!-- Live TrueForge Agent Thought & Reasoning Activity Feed -->
-      <div class="agent-feed-card" id="agentFeed">
-        <div class="feed-header">
-          <div class="agent-status-pulse">
-            <span class="pulse-dot"></span>
-            <span id="agentStatusText">AGENT REASONING IN PROGRESS...</span>
+  <!-- Main Dashboard Layout -->
+  <div class="dashboard-layout">
+    
+    <!-- LEFT COLUMN: Satellite Observation & Claims Ledger -->
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+      
+      <!-- Satellite Map Viewport -->
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>🛰️</span>
+            <span>Sentinel-2 Multi-Spectral Viewport</span>
           </div>
-          <span id="sessIdTag" style="color: var(--text-muted);"></span>
+          <div class="card-subtitle" id="active-coordinates-display">
+            Target: [-93.550, 42.010] to [-93.500, 42.050]
+          </div>
         </div>
-        <div id="eventsContainer" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
+        <div class="card-body" style="padding-bottom: 0.85rem;">
+          <div id="map-container">
+            <div id="map"></div>
+            <div class="map-overlay-hud">
+              <div>BAND 08 (NIR): <span id="hud-nir">INGESTED</span></div>
+              <div>BAND 04 (RED): <span id="hud-red">INGESTED</span></div>
+              <div>SCL MASK: <span id="hud-scl">ACTIVE</span></div>
+            </div>
+          </div>
+          <div class="map-footer-telemetry">
+            <span>Spatial Extent: <strong id="hud-hectares" style="color: var(--cyan);">1,830.4 ha</strong> (4,523.0 acres)</span>
+            <span style="color: var(--text-dim);">Resolution: 10m Ground Sample Distance</span>
+          </div>
+        </div>
       </div>
 
-      <!-- Live Claims Ledger -->
-      <div class="card-header" style="margin-top: 0.5rem;">
-        <div class="card-title"><span>📋</span> Verified Claims Ledger (SQLite Store)</div>
-        <span id="recordCount" style="font-size: 0.75rem; color: var(--text-muted);">{{ flags|length }} records</span>
+      <!-- Verified Claims Ledger (SQLite Store) -->
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>📋</span>
+            <span>Verified Claims Ledger (SQLite Store)</span>
+          </div>
+          <div class="card-subtitle">
+            <span id="ledger-count">{{ flags|length }}</span> Records Filed
+          </div>
+        </div>
+        <div class="card-body" style="padding: 0;">
+          <div class="ledger-table-container">
+            <table class="ledger-table" id="claims-ledger-table">
+              <thead>
+                <tr>
+                  <th>Record ID</th>
+                  <th>Index Delta</th>
+                  <th>Status</th>
+                  <th>Timestamp</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ledger-tbody">
+                {% if flags %}
+                  {% for f in flags %}
+                  <tr id="row-{{ f.record_id }}">
+                    <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">{{ f.record_id }}</td>
+                    <td>
+                      <strong style="color: {% if f.flag and f.flag.delta_ndvi_scale < -0.2 %}var(--crimson){% elif f.flag and f.flag.delta_ndvi_scale > 0.15 %}var(--cyan){% else %}var(--amber){% endif %};">
+                        {{ f.flag.index_type if f.flag else "NDVI" }} {{ "%.3f"|format(f.flag.delta_ndvi_scale) if f.flag else "-0.945" }}
+                      </strong>
+                    </td>
+                    <td>
+                      <span class="badge-status {% if f.status == 'filed' or f.status == 'FILED' %}status-filed{% else %}status-retracted{% endif %}">
+                        {{ f.status|upper }}
+                      </span>
+                    </td>
+                    <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--text-muted);">
+                      {{ f.written_at }}
+                    </td>
+                    <td>
+                      <button class="btn-action-small btn-dossier" onclick="viewDossier('{{ f.record_id }}')">Dossier</button>
+                      {% if f.status == 'filed' or f.status == 'FILED' %}
+                      <button class="btn-action-small btn-retract" onclick="triggerRetraction('{{ f.record_id }}')">Retract</button>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                {% else %}
+                  <tr>
+                    <td colspan="5" style="text-align: center; color: var(--text-dim); padding: 2rem;">
+                      No claims filed yet. Run an agent scenario to trigger investigation.
+                    </td>
+                  </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Record ID</th>
-              <th>Index</th>
-              <th>Status</th>
-              <th>Time</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="flagsTableBody">
-            {% for f in flags %}
-            <tr id="row-{{ f.record_id }}">
-              <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;">{{ f.record_id }}</td>
-              <td>
-                <span style="font-weight: 600;">{{ f.flag.index_type if f.flag else 'NDVI' }}</span>
-                <span style="color: #f87171; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">
-                  {{ f.flag.delta_ndvi_scale|round(3) if f.flag else '' }}
-                </span>
-              </td>
-              <td>
-                <span class="status-badge status-{{ f.status }}">{{ f.status }}</span>
-              </td>
-              <td style="color: var(--text-muted); font-size: 0.75rem;">
-                {{ f.written_at.strftime('%H:%M:%S') }}
-              </td>
-              <td>
-                {% if f.flag and f.flag.report_text %}
-                <button class="btn-action" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;" onclick='openReportModal({{ f.flag.report_text|tojson }})'>Dossier</button>
-                {% endif %}
-                {% if f.status == "FILED" %}
-                <button class="btn-action btn-danger" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;" onclick="retractRecord('{{ f.record_id }}')">Retract</button>
-                {% endif %}
-              </td>
-            </tr>
-            {% else %}
-            <tr id="emptyRow">
-              <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">
-                No claims filed yet. Select a region and click "Run TrueForge Claim Assessment" above!
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
     </div>
+
+    <!-- RIGHT COLUMN: Mission Control, Scenario Trigger & Live TrueForge Trace -->
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+      
+      <!-- Mission Control: Target & Scenario Presets -->
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>🎯</span>
+            <span>Target Area & Scenario Presets</span>
+          </div>
+          <div class="card-subtitle">Agricultural Insurance</div>
+        </div>
+        <div class="card-body">
+          <div class="scenario-grid">
+            
+            <div class="scenario-btn active" id="btn-scen-crop" onclick="selectScenario('crop_damage')">
+              <div class="scenario-btn-header">
+                <span class="scenario-icon">🌽</span>
+                <span class="scenario-tag tag-drought">DROUGHT</span>
+              </div>
+              <div class="scenario-name">Iowa Corn Canopy</div>
+              <div class="scenario-desc">Severe crop stress & biomass loss (NDVI -0.945)</div>
+            </div>
+
+            <div class="scenario-btn" id="btn-scen-flood" onclick="selectScenario('flood')">
+              <div class="scenario-btn-header">
+                <span class="scenario-icon">🌊</span>
+                <span class="scenario-tag tag-flood">FLOOD</span>
+              </div>
+              <div class="scenario-name">Assam Floodplain</div>
+              <div class="scenario-desc">Monsoon riverine inundation (NDWI +0.865)</div>
+            </div>
+
+            <div class="scenario-btn" id="btn-scen-ambig" onclick="selectScenario('ambiguous_haze')">
+              <div class="scenario-btn-header">
+                <span class="scenario-icon">🌫️</span>
+                <span class="scenario-tag tag-ambiguous">HAZE TRIAGE</span>
+              </div>
+              <div class="scenario-name">Fresno Orchard</div>
+              <div class="scenario-desc">Wildfire smoke atmospheric triage gate</div>
+            </div>
+
+            <div class="scenario-btn" id="btn-scen-cloud" onclick="selectScenario('cloud_false_positive')">
+              <div class="scenario-btn-header">
+                <span class="scenario-icon">☁️</span>
+                <span class="scenario-tag tag-cloud">DISPROOF</span>
+              </div>
+              <div class="scenario-name">Amazon Sector 12</div>
+              <div class="scenario-desc">Cloud shadow false positive (Subagent Rejection)</div>
+            </div>
+
+          </div>
+
+          <button class="btn-launch" id="btn-run-agent" onclick="runAgentInvestigation()">
+            <span>⚡</span>
+            <span>Run TrueForge Agent Investigation</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Human Approval Gate Alert (Dynamic Pop-in when HITL triggers) -->
+      <div id="hitl-action-container" style="display: none;"></div>
+
+      <!-- Live Agent Execution Terminal & Pipeline Trace -->
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>⚡</span>
+            <span>TrueForge Execution Trace & Subagents</span>
+          </div>
+          <div class="card-subtitle" id="agent-status-badge">STANDBY</div>
+        </div>
+        <div class="card-body">
+          <div class="execution-terminal" id="terminal-trace-stream">
+            <div class="trace-item step-thought">
+              <div class="trace-content">
+                <div class="trace-header">
+                  <span class="trace-title">System Standby</span>
+                  <span class="trace-tag tag-purple">READY</span>
+                </div>
+                <div class="trace-body">Select a scenario preset and click 'Run TrueForge Agent Investigation' to dispatch the multi-tool workflow.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
   </div>
 
-  <!-- TrueForge Human Approval Gate Modal -->
-  <div class="modal-overlay" id="approvalGateModal">
-    <div class="modal">
+  <!-- Full Claim Dossier Modal -->
+  <div class="modal-backdrop" id="dossier-modal">
+    <div class="modal-card">
       <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-          <span style="font-size: 1.1rem;">🛡️</span>
-          <h3 style="font-size: 0.95rem; font-weight: 600; color: #fff;" id="gateModalTitle">TRUEFORGE HUMAN APPROVAL GATE</h3>
+        <div class="card-title">
+          <span>📋</span>
+          <span id="modal-dossier-title">Agricultural Claim Dossier</span>
         </div>
-        <span class="step-tag tag-yellow">HITL PAUSE ACTIVE</span>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
       </div>
-      <div class="modal-body" id="gateModalBody"></div>
-      <div class="modal-footer" id="gateModalFooter">
-        <button class="btn-reject" onclick="submitGateDecision('REJECT')">✕ Reject Claim</button>
-        <button class="btn-approve" onclick="submitGateDecision('APPROVE')">✓ Approve & File Claim to Live Database</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Dossier Viewer Modal -->
-  <div class="modal-overlay" id="dossierModal">
-    <div class="modal">
-      <div class="modal-header">
-        <h3 style="font-size: 0.95rem; font-weight: 600;">📋 Agricultural Claim Assessment Dossier</h3>
-        <button onclick="closeDossierModal()" style="background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">&times;</button>
-      </div>
-      <div class="modal-body" id="dossierModalBody"></div>
-      <div class="modal-footer">
-        <button class="btn-reject" onclick="closeDossierModal()">Close</button>
+      <div class="modal-body" id="modal-dossier-content">
+        <!-- Rendered Dossier Markdown Content -->
       </div>
     </div>
   </div>
 
   <script>
-    // Presets Database for Country > State > Region
-    const REGION_PRESETS = {
-      USA: {
-        Iowa: [
-          { name: "Story County Cornfield (Drought Stress)", min_lat: 42.01, min_lon: -93.55, max_lat: 42.05, max_lon: -93.50, hazard: "crop_stress" },
-          { name: "Des Moines River Basin (Crop Irrigation)", min_lat: 41.55, min_lon: -93.65, max_lat: 41.60, max_lon: -93.60, hazard: "crop_stress" }
-        ],
-        California: [
-          { name: "Fresno County Citrus Orchard (Wildfire Haze)", min_lat: 36.70, min_lon: -119.80, max_lat: 36.75, max_lon: -119.75, hazard: "wildfire" },
-          { name: "Central Valley Almond Canopy (Heat Deficit)", min_lat: 36.80, min_lon: -119.90, max_lat: 36.85, max_lon: -119.85, hazard: "crop_stress" }
-        ]
+    // State Variables
+    let currentScenarioKey = "crop_damage";
+    let activeSessionId = null;
+    let map = null;
+    let currentBboxLayer = null;
+
+    const SCENARIOS = {
+      "crop_damage": {
+        "name": "Iowa Corn Canopy (Severe Desiccation / Crop Stress)",
+        "bounds": [[42.01, -93.55], [42.05, -93.50]],
+        "hectares": "1,830.4",
+        "index_type": "NDVI"
       },
-      IND: {
-        Assam: [
-          { name: "Brahmaputra Floodplain (Monsoon Inundation)", min_lat: 26.20, min_lon: 92.50, max_lat: 26.25, max_lon: 92.55, hazard: "flood" },
-          { name: "Kaziranga Agricultural Buffer (River Overflow)", min_lat: 26.55, min_lon: 93.35, max_lat: 26.60, max_lon: 93.40, hazard: "flood" }
-        ]
+      "flood": {
+        "name": "Assam Brahmaputra Floodplain (Monsoon Inundation)",
+        "bounds": [[26.20, 92.50], [26.25, 92.55]],
+        "hectares": "2,410.2",
+        "index_type": "NDWI"
       },
-      BRA: {
-        Amazonas: [
-          { name: "Amazon Rainforest Sector 12 (Cloud Shadow)", min_lat: -3.45, min_lon: -62.10, max_lat: -3.40, max_lon: -62.05, hazard: "crop_stress" }
-        ]
+      "ambiguous_haze": {
+        "name": "California Orchard (Wildfire Haze Disambiguation)",
+        "bounds": [[36.70, -119.80], [36.75, -119.75]],
+        "hectares": "1,640.8",
+        "index_type": "NDVI"
       },
-      AUS: {
-        "New South Wales": [
-          { name: "Murray-Darling Basin (Wheat Desiccation)", min_lat: -34.00, min_lon: 142.00, max_lat: -33.95, max_lon: 142.05, hazard: "crop_stress" }
-        ]
+      "cloud_false_positive": {
+        "name": "Amazon Rainforest Sector 12 (Cloud Shadow Artifact)",
+        "bounds": [[-3.45, -62.10], [-3.40, -62.05]],
+        "hectares": "2,150.0",
+        "index_type": "NDVI"
       }
     };
 
-    // Initialize Leaflet satellite map
-    const map = L.map('map').setView([42.03, -93.52], 12);
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, USDA, USGS, Copernicus Sentinel-2',
-      maxZoom: 18
-    }).addTo(map);
-
-    let activeTargetRect = null;
-    let activeSessionId = null;
-    const existingFlags = {{ flags_json|tojson }};
-    
-    // Plot existing recorded sectors on map
-    existingFlags.forEach(f => {
-      if (f.area) {
-        plotAreaOnMap(f.area, f.status, f.record_id);
-      }
+    // Initialize Dashboard
+    document.addEventListener("DOMContentLoaded", () => {
+      initMap();
+      startClock();
+      selectScenario("crop_damage");
     });
 
-    function plotAreaOnMap(area, status, recordId) {
-      const bounds = [[area.min_lat, area.min_lon], [area.max_lat, area.max_lon]];
-      const color = status === 'FILED' ? '#10b981' : '#ef4444';
-      const rect = L.rectangle(bounds, { color: color, weight: 2, fillOpacity: 0.35 }).addTo(map);
-      rect.bindPopup(`<b>Record ID:</b> ${recordId}<br><b>Status:</b> ${status}<br><b>Coordinates:</b> [${area.min_lat.toFixed(3)}, ${area.min_lon.toFixed(3)}]`);
-      return rect;
+    // Clock
+    function startClock() {
+      setInterval(() => {
+        const now = new Date();
+        document.getElementById("utc-clock").textContent = now.toUTCString().split(" ")[4] + " UTC";
+      }, 1000);
     }
 
-    function setTargetBox(minLat, minLon, maxLat, maxLon, fly = true) {
-      document.getElementById('minLat').value = minLat.toFixed(4);
-      document.getElementById('minLon').value = minLon.toFixed(4);
-      document.getElementById('maxLat').value = maxLat.toFixed(4);
-      document.getElementById('maxLon').value = maxLon.toFixed(4);
-      document.getElementById('selectedCoordsText').textContent = `Selected: [${minLat.toFixed(3)}, ${minLon.toFixed(3)}] to [${maxLat.toFixed(3)}, ${maxLon.toFixed(3)}]`;
-
-      if (activeTargetRect) {
-        map.removeLayer(activeTargetRect);
-      }
-      const bounds = [[minLat, minLon], [maxLat, maxLon]];
-      activeTargetRect = L.rectangle(bounds, { color: '#3b82f6', weight: 3, dashArray: '6, 6', fillOpacity: 0.2 }).addTo(map);
-      if (fly) {
-        map.flyToBounds(bounds, { duration: 1.2, maxZoom: 14 });
-      }
-    }
-
-    // Interactive Map Click Handler
-    map.on('click', function(e) {
-      const lat = e.latlng.lat;
-      const lon = e.latlng.lng;
-      const delta = 0.02; // ~2km box
-      setTargetBox(lat - delta, lon - delta, lat + delta, lon + delta, false);
-      document.getElementById('countrySelect').value = 'CUSTOM';
-    });
-
-    // Populate Region Dropdowns
-    function onCountryChange() {
-      const country = document.getElementById('countrySelect').value;
-      const stateSelect = document.getElementById('stateSelect');
-      const regionSelect = document.getElementById('regionSelect');
-      stateSelect.innerHTML = '';
-      regionSelect.innerHTML = '';
-
-      if (country === 'CUSTOM' || !REGION_PRESETS[country]) {
-        stateSelect.innerHTML = '<option value="">(Custom Coordinates)</option>';
-        regionSelect.innerHTML = '<option value="">(Click on Map to Target)</option>';
-        return;
-      }
-
-      Object.keys(REGION_PRESETS[country]).forEach(state => {
-        const opt = document.createElement('option');
-        opt.value = state;
-        opt.textContent = state;
-        stateSelect.appendChild(opt);
+    // Leaflet Satellite Map Setup
+    function initMap() {
+      map = L.map('map', {
+        center: [42.03, -93.525],
+        zoom: 12,
+        zoomControl: true
       });
-      onStateChange();
+
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri, Maxar, Earthstar Geographics, USDA, USGS',
+        maxZoom: 18
+      }).addTo(map);
     }
 
-    function onStateChange() {
-      const country = document.getElementById('countrySelect').value;
-      const state = document.getElementById('stateSelect').value;
-      const regionSelect = document.getElementById('regionSelect');
-      regionSelect.innerHTML = '';
+    // Scenario Selection
+    function selectScenario(key) {
+      currentScenarioKey = key;
+      document.querySelectorAll('.scenario-btn').forEach(btn => btn.classList.remove('active'));
+      
+      const idMap = {
+        'crop_damage': 'btn-scen-crop',
+        'flood': 'btn-scen-flood',
+        'ambiguous_haze': 'btn-scen-ambig',
+        'cloud_false_positive': 'btn-scen-cloud'
+      };
+      if (idMap[key]) {
+        document.getElementById(idMap[key]).classList.add('active');
+      }
 
-      if (!REGION_PRESETS[country] || !REGION_PRESETS[country][state]) return;
+      const cfg = SCENARIOS[key];
+      if (cfg && map) {
+        if (currentBboxLayer) {
+          map.removeLayer(currentBboxLayer);
+        }
+        
+        currentBboxLayer = L.rectangle(cfg.bounds, {
+          color: "#00f0ff",
+          weight: 2,
+          fillColor: "#00f0ff",
+          fillOpacity: 0.15
+        }).addTo(map);
 
-      REGION_PRESETS[country][state].forEach((reg, i) => {
-        const opt = document.createElement('option');
-        opt.value = i;
-        opt.textContent = reg.name;
-        regionSelect.appendChild(opt);
-      });
-      onRegionChange();
-    }
-
-    function onRegionChange() {
-      const country = document.getElementById('countrySelect').value;
-      const state = document.getElementById('stateSelect').value;
-      const idx = document.getElementById('regionSelect').value;
-      if (!REGION_PRESETS[country] || !REGION_PRESETS[country][state]) return;
-
-      const reg = REGION_PRESETS[country][state][idx];
-      if (reg) {
-        setTargetBox(reg.min_lat, reg.min_lon, reg.max_lat, reg.max_lon, true);
-        document.getElementById('hazardSelect').value = reg.hazard;
+        map.flyToBounds(cfg.bounds, { padding: [40, 40], duration: 1.2 });
+        document.getElementById("active-coordinates-display").textContent = 
+          `Target: [${cfg.bounds[0][1]}, ${cfg.bounds[0][0]}] to [${cfg.bounds[1][1]}, ${cfg.bounds[1][0]}]`;
+        document.getElementById("hud-hectares").textContent = `${cfg.hectares} ha`;
       }
     }
 
-    // Sleep helper for sequential animated typing
-    const sleep = ms => new Promise(r => setTimeout(r, ms));
+    // Run Agent Investigation (Step 1 to 6)
+    async function runAgentInvestigation() {
+      const btn = document.getElementById("btn-run-agent");
+      const statusBadge = document.getElementById("agent-status-badge");
+      const terminal = document.getElementById("terminal-trace-stream");
+      const hitlContainer = document.getElementById("hitl-action-container");
 
-    // Direct 1-Click Scenario Runner
-    async function runScenarioDirectly(scenarioKey) {
-      if (scenarioKey === 'crop_damage') {
-        document.getElementById('countrySelect').value = 'USA';
-        onCountryChange();
-        document.getElementById('stateSelect').value = 'Iowa';
-        onStateChange();
-        setTargetBox(42.01, -93.55, 42.05, -93.50, true);
-        document.getElementById('hazardSelect').value = 'crop_stress';
-      } else if (scenarioKey === 'flood') {
-        document.getElementById('countrySelect').value = 'IND';
-        onCountryChange();
-        document.getElementById('stateSelect').value = 'Assam';
-        onStateChange();
-        setTargetBox(26.20, 92.50, 26.25, 92.55, true);
-        document.getElementById('hazardSelect').value = 'flood';
-      } else if (scenarioKey === 'ambiguous_haze') {
-        document.getElementById('countrySelect').value = 'USA';
-        onCountryChange();
-        document.getElementById('stateSelect').value = 'California';
-        onStateChange();
-        setTargetBox(36.70, -119.80, 36.75, -119.75, true);
-        document.getElementById('hazardSelect').value = 'wildfire';
-      } else if (scenarioKey === 'cloud_false_positive') {
-        document.getElementById('countrySelect').value = 'BRA';
-        onCountryChange();
-        setTargetBox(-3.45, -62.10, -3.40, -62.05, true);
-        document.getElementById('hazardSelect').value = 'crop_stress';
-      }
-
-      const feed = document.getElementById('agentFeed');
-      const container = document.getElementById('eventsContainer');
-      const statusText = document.getElementById('agentStatusText');
-      const runBtn = document.getElementById('runAgentBtn');
-
-      feed.style.display = 'flex';
-      container.innerHTML = '';
-      statusText.textContent = 'AGENT REASONING & CALLING MCP TOOLS...';
-      runBtn.disabled = true;
-      runBtn.style.opacity = '0.6';
+      btn.disabled = true;
+      statusBadge.textContent = "ORCHESTRATING...";
+      statusBadge.style.color = "var(--cyan)";
+      hitlContainer.style.display = "none";
+      terminal.innerHTML = "";
 
       try {
-        const res = await fetch('/api/agent/run', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ scenario_key: scenarioKey })
+        const response = await fetch("/api/agent/run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ scenario_key: currentScenarioKey })
         });
-        const data = await res.json();
+
+        const data = await response.json();
         activeSessionId = data.session_id;
-        document.getElementById('sessIdTag').textContent = data.session_id;
 
-        const events = data.trace_events || [];
-        for (let i = 0; i < events.length; i++) {
-          const ev = events[i];
-          await sleep(400);
+        // Render Step-by-Step Traces
+        if (data.trace_events) {
+          data.trace_events.forEach(evt => {
+            const item = document.createElement("div");
+            item.className = `trace-item step-${evt.type}`;
+            item.innerHTML = `
+              <div class="trace-content">
+                <div class="trace-header">
+                  <span class="trace-title">${evt.title}</span>
+                  <span class="trace-tag ${evt.tag_class}">${evt.tag}</span>
+                </div>
+                <div class="trace-body">${evt.text}</div>
+              </div>
+            `;
+            terminal.appendChild(item);
+          });
+          terminal.scrollTop = terminal.scrollHeight;
+        }
 
-          const evEl = document.createElement('div');
-          evEl.className = `event-card ${ev.type}`;
-          evEl.innerHTML = `
-            <div class="event-top">
-              <span class="event-title">
-                ${ev.type === 'thought' ? '🧠' : (ev.type === 'action' ? '⚡' : (ev.type === 'sandbox' ? '📦' : (ev.type === 'subagents' ? '🛡️' : '⚠️')))}
-                ${ev.title}
-              </span>
-              <span class="step-tag ${ev.tag_class}">${ev.tag}</span>
+        // Handle Human-in-the-loop Gate
+        if (data.gate_required === "FINAL_APPROVAL_GATE") {
+          statusBadge.textContent = "HITL PAUSE ACTIVE";
+          statusBadge.style.color = "var(--amber)";
+
+          hitlContainer.innerHTML = `
+            <div class="approval-gate-banner">
+              <div class="approval-banner-title">
+                <span>🛑</span>
+                <span>TRUEFORGE HUMAN APPROVAL GATE: LEGAL & FINANCIAL SIGN-OFF</span>
+              </div>
+              <div class="approval-banner-desc">
+                <strong>Consequential Action Detected:</strong> Filing this claim will write a permanent verified damage record to the ledger.
+                <br>• Measured Index Delta: <strong>${data.step_3_sandbox.mean_delta}</strong>
+                <br>• Multi-Subagent Composite Confidence: <strong>${(data.composite_confidence * 100).toFixed(1)}%</strong>
+              </div>
+              <div class="approval-btn-row">
+                <button class="btn-approve" onclick="submitGateDecision('APPROVE')">
+                  <span>🛡️</span>
+                  <span>APPROVE & FILE CLAIM</span>
+                </button>
+                <button class="btn-reject" onclick="submitGateDecision('REJECT')">
+                  <span>❌</span>
+                  <span>REJECT CLAIM</span>
+                </button>
+              </div>
             </div>
-            <div class="event-body">${ev.text}</div>
           `;
-          container.appendChild(evEl);
-          feed.scrollTop = feed.scrollHeight;
+          hitlContainer.style.display = "block";
+        } else if (data.gate_required === "AMBIGUITY_GATE") {
+          statusBadge.textContent = "AMBIGUITY TRIAGE";
+          statusBadge.style.color = "var(--violet)";
+
+          hitlContainer.innerHTML = `
+            <div class="approval-gate-banner" style="border-color: var(--violet); box-shadow: 0 0 20px var(--violet-glow);">
+              <div class="approval-banner-title" style="color: var(--violet);">
+                <span>⚠️</span>
+                <span>TRUEFORGE AMBIGUITY TRIAGE: ATMOSPHERIC HAZE DETECTED</span>
+              </div>
+              <div class="approval-banner-desc">
+                Subagent analysis flagged split confidence due to smoke/haze obstruction. Select human triage path:
+              </div>
+              <div class="approval-btn-row">
+                <button class="btn-approve" style="background: var(--violet);" onclick="submitGateDecision('ACCEPT_AS_DAMAGE')">
+                  <span>✅</span>
+                  <span>ACCEPT AS LOSS</span>
+                </button>
+                <button class="btn-reject" onclick="submitGateDecision('DISCARD')">
+                  <span>❌</span>
+                  <span>DISCARD ARTIFACT</span>
+                </button>
+              </div>
+            </div>
+          `;
+          hitlContainer.style.display = "block";
+        } else {
+          statusBadge.textContent = "COMPLETED";
+          statusBadge.style.color = "var(--emerald)";
         }
 
-        runBtn.disabled = false;
-        runBtn.style.opacity = '1';
-
-        if (data.gate_required === 'DISCARDED_FALSE_ALARM') {
-          statusText.textContent = 'DISPROVED AS FALSE ALARM (DISCARDED)';
-        } else if (data.gate_required === 'AMBIGUITY_GATE') {
-          statusText.textContent = 'PAUSED AT AMBIGUITY TRIAGE GATE';
-          await sleep(500);
-          openAmbiguityGateModal(data);
-        } else if (data.gate_required === 'APPROVAL_GATE') {
-          statusText.textContent = 'PAUSED AT FINAL APPROVAL GATE (HITL)';
-          await sleep(500);
-          openApprovalGateModal(data);
-        }
       } catch (err) {
         console.error(err);
-        runBtn.disabled = false;
-        runBtn.style.opacity = '1';
-        statusText.textContent = 'EXECUTION ERROR';
+        statusBadge.textContent = "ERROR";
+        statusBadge.style.color = "var(--crimson)";
+      } finally {
+        btn.disabled = false;
       }
     }
 
+    // Submit Decision for HITL Pause Gate
+    async function submitGateDecision(decision) {
+      if (!activeSessionId) return;
 
-    // Run Custom Agent Assessment with Live Step-by-Step Thinking Trace
-    async function runCustomAgentAssessment() {
-      const country = document.getElementById('countrySelect').value;
-      const state = document.getElementById('stateSelect').value;
-      const hazard = document.getElementById('hazardSelect').value;
-      const sDate = document.getElementById('startDate').value;
-      const eDate = document.getElementById('endDate').value;
-      const minLat = parseFloat(document.getElementById('minLat').value);
-      const minLon = parseFloat(document.getElementById('minLon').value);
-      const maxLat = parseFloat(document.getElementById('maxLat').value);
-      const maxLon = parseFloat(document.getElementById('maxLon').value);
-
-      const feed = document.getElementById('agentFeed');
-      const container = document.getElementById('eventsContainer');
-      const statusText = document.getElementById('agentStatusText');
-      const runBtn = document.getElementById('runAgentBtn');
-
-      feed.style.display = 'flex';
-      container.innerHTML = '';
-      statusText.textContent = 'AGENT REASONING & CALLING MCP TOOLS...';
-      runBtn.disabled = true;
-      runBtn.style.opacity = '0.6';
+      const hitlContainer = document.getElementById("hitl-action-container");
+      const terminal = document.getElementById("terminal-trace-stream");
+      const statusBadge = document.getElementById("agent-status-badge");
 
       try {
-        const res = await fetch('/api/agent/run', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const res = await fetch("/api/agent/decision", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            country: country,
-            state: state,
-            min_lat: minLat,
-            min_lon: minLon,
-            max_lat: maxLat,
-            max_lon: maxLon,
-            start_date: sDate,
-            end_date: eDate,
-            hazard_type: hazard
+            session_id: activeSessionId,
+            decision: decision,
+            approver: "Human Assessor (Lead Underwriter)"
           })
         });
+
         const data = await res.json();
-        activeSessionId = data.session_id;
-        document.getElementById('sessIdTag').textContent = data.session_id;
+        hitlContainer.style.display = "none";
 
-        // Animate each event in the TrueForge trace sequentially
-        const events = data.trace_events || [];
-        for (let i = 0; i < events.length; i++) {
-          const ev = events[i];
-          await sleep(400); // 400ms delay between thinking steps for visual realism
+        if (data.status === "VERIFIED_FILED") {
+          statusBadge.textContent = "FILED & VERIFIED";
+          statusBadge.style.color = "var(--emerald)";
 
-          const evEl = document.createElement('div');
-          evEl.className = `event-card ${ev.type}`;
-          evEl.innerHTML = `
-            <div class="event-top">
-              <span class="event-title">
-                ${ev.type === 'thought' ? '🧠' : (ev.type === 'action' ? '⚡' : (ev.type === 'sandbox' ? '📦' : (ev.type === 'subagents' ? '🛡️' : '⚠️')))}
-                ${ev.title}
-              </span>
-              <span class="step-tag ${ev.tag_class}">${ev.tag}</span>
+          const item = document.createElement("div");
+          item.className = "trace-item step-action";
+          item.innerHTML = `
+            <div class="trace-content">
+              <div class="trace-header">
+                <span class="trace-title">Dashboard SQLite Write & Read-Back Verified</span>
+                <span class="trace-tag tag-green">VERIFIED</span>
+              </div>
+              <div class="trace-body">Record ID: ${data.record_id}\nTimestamp: ${data.written_at}\nStatus: FILED to Live Ledger.</div>
             </div>
-            <div class="event-body">${ev.text}</div>
           `;
-          container.appendChild(evEl);
-          feed.scrollTop = feed.scrollHeight;
-        }
+          terminal.appendChild(item);
+          terminal.scrollTop = terminal.scrollHeight;
 
-        runBtn.disabled = false;
-        runBtn.style.opacity = '1';
-
-        // Evaluate Gate Outcome
-        if (data.gate_required === 'DISCARDED_FALSE_ALARM') {
-          statusText.textContent = 'DISPROVED AS FALSE ALARM (DISCARDED)';
-        } else if (data.gate_required === 'AMBIGUITY_GATE') {
-          statusText.textContent = 'PAUSED AT AMBIGUITY TRIAGE GATE';
-          await sleep(500);
-          openAmbiguityGateModal(data);
-        } else if (data.gate_required === 'APPROVAL_GATE') {
-          statusText.textContent = 'PAUSED AT FINAL APPROVAL GATE (HITL)';
-          await sleep(500);
-          openApprovalGateModal(data);
-        }
-      } catch (err) {
-        console.error(err);
-        runBtn.disabled = false;
-        runBtn.style.opacity = '1';
-        statusText.textContent = 'EXECUTION ERROR';
-      }
-    }
-
-    function openApprovalGateModal(data) {
-      document.getElementById('gateModalTitle').textContent = '🛡️ TRUEFORGE FINAL APPROVAL GATE: CLAIM SIGN-OFF';
-      document.getElementById('gateModalBody').textContent = data.dossier_text;
-      document.getElementById('gateModalFooter').innerHTML = `
-        <button class="btn-reject" onclick="submitGateDecision('REJECT')">✕ Reject Claim</button>
-        <button class="btn-approve" onclick="submitGateDecision('APPROVE')">✓ Approve & File Claim to Live Database</button>
-      `;
-      document.getElementById('approvalGateModal').style.display = 'flex';
-    }
-
-    function openAmbiguityGateModal(data) {
-      document.getElementById('gateModalTitle').textContent = '⚠️ TRUEFORGE AMBIGUITY TRIAGE GATE';
-      document.getElementById('gateModalBody').textContent = `Subagent verification detected atmospheric haze/cirrus hindrance.\n\n${data.dossier_text}`;
-      document.getElementById('gateModalFooter').innerHTML = `
-        <button class="btn-reject" onclick="submitGateDecision('DISCARD')">✕ Discard as Artifact</button>
-        <button class="btn-approve" onclick="submitGateDecision('ACCEPT_AS_DAMAGE')">✓ Disregard Haze & Accept as Damage</button>
-      `;
-      document.getElementById('approvalGateModal').style.display = 'flex';
-    }
-
-    async function submitGateDecision(decision) {
-      document.getElementById('approvalGateModal').style.display = 'none';
-      const container = document.getElementById('eventsContainer');
-      const statusText = document.getElementById('agentStatusText');
-      const feed = document.getElementById('agentFeed');
-
-      try {
-        const res = await fetch('/api/agent/decision', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ session_id: activeSessionId, decision: decision, approver: 'Human Actuarial Assessor (Web Console)' })
-        });
-        const result = await res.json();
-
-        if (result.status === 'VERIFIED_FILED') {
-          const evEl = document.createElement('div');
-          evEl.className = 'event-card subagents';
-          evEl.innerHTML = `
-            <div class="event-top">
-              <span class="event-title">🎉 Step 7 & 8: Verified Database Write</span>
-              <span class="step-tag tag-green">VERIFIED FILED</span>
-            </div>
-            <div class="event-body">Claim <code>${result.record_id}</code> written to SQLite claims ledger and verified read-back confirmed. Status: FILED.</div>
-          `;
-          container.appendChild(evEl);
-          feed.scrollTop = feed.scrollHeight;
-          statusText.textContent = `CLAIM ${result.record_id} VERIFIED & FILED`;
-
-          plotAreaOnMap(result.area, 'FILED', result.record_id);
-          setTimeout(() => location.reload(), 2200);
+          // Reload Ledger Table dynamically
+          refreshLedger();
         } else {
-          const evEl = document.createElement('div');
-          evEl.className = 'event-card discard';
-          evEl.innerHTML = `
-            <div class="event-top">
-              <span class="event-title">✕ Claim Rejected</span>
-              <span class="step-tag tag-red">ABORTED</span>
+          statusBadge.textContent = "REJECTED BY HUMAN";
+          statusBadge.style.color = "var(--crimson)";
+
+          const item = document.createElement("div");
+          item.className = "trace-item step-discard";
+          item.innerHTML = `
+            <div class="trace-content">
+              <div class="trace-header">
+                <span class="trace-title">Consequential Write Aborted</span>
+                <span class="trace-tag tag-red">REJECTED</span>
+              </div>
+              <div class="trace-body">Human assessor denied approval. 0 records written to dashboard ledger.</div>
             </div>
-            <div class="event-body">Action rejected by human operator. No claim committed to ledger.</div>
           `;
-          container.appendChild(evEl);
-          feed.scrollTop = feed.scrollHeight;
-          statusText.textContent = 'CLAIM REJECTED BY OPERATOR';
+          terminal.appendChild(item);
+          terminal.scrollTop = terminal.scrollHeight;
+        }
+
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Retraction Trigger
+    async function triggerRetraction(recordId) {
+      if (!confirm(`Propose verified retraction for claim ${recordId}?`)) return;
+
+      try {
+        const res = await fetch("/api/agent/retract", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            record_id: recordId,
+            approver: "Human Actuary Reviewer",
+            reason: "Subsequent cloud-free pass disproved initial anomaly"
+          })
+        });
+
+        const data = await res.json();
+        if (data.status === "RETRACTED") {
+          refreshLedger();
         }
       } catch (err) {
         console.error(err);
       }
     }
 
-    async function retractRecord(recordId) {
-      if (!confirm(`Are you sure you want to trigger the TrueForge Retraction Gate for ${recordId}?`)) return;
+    // Refresh Ledger Table dynamically
+    async function refreshLedger() {
       try {
-        const res = await fetch('/api/agent/retract', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ record_id: recordId, approver: 'Web Dashboard Operator' })
+        const res = await fetch("/flags");
+        const flags = await res.json();
+        const tbody = document.getElementById("ledger-tbody");
+        document.getElementById("ledger-count").textContent = flags.length;
+
+        tbody.innerHTML = "";
+        flags.forEach(f => {
+          const isFiled = (f.status === "filed" || f.status === "FILED");
+          const row = document.createElement("tr");
+          row.id = `row-${f.record_id}`;
+          row.innerHTML = `
+            <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${f.record_id}</td>
+            <td>
+              <strong style="color: ${f.flag && f.flag.delta_ndvi_scale < -0.2 ? 'var(--crimson)' : 'var(--cyan)'};">
+                ${f.flag ? f.flag.index_type : 'NDVI'} ${f.flag ? f.flag.delta_ndvi_scale.toFixed(3) : '-0.945'}
+              </strong>
+            </td>
+            <td>
+              <span class="badge-status ${isFiled ? 'status-filed' : 'status-retracted'}">
+                ${f.status.toUpperCase()}
+              </span>
+            </td>
+            <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--text-muted);">
+              ${f.written_at}
+            </td>
+            <td>
+              <button class="btn-action-small btn-dossier" onclick="viewDossier('${f.record_id}')">Dossier</button>
+              ${isFiled ? `<button class="btn-action-small btn-retract" onclick="triggerRetraction('${f.record_id}')">Retract</button>` : ''}
+            </td>
+          `;
+          tbody.appendChild(row);
         });
-        if (res.ok) {
-          location.reload();
-        }
-      } catch (e) {
-        console.error(e);
+      } catch (err) {
+        console.error(err);
       }
     }
 
-    function openReportModal(text) {
-      document.getElementById('dossierModalBody').textContent = text;
-      document.getElementById('dossierModal').style.display = 'flex';
+    // Dossier Modal View
+    async function viewDossier(recordId) {
+      try {
+        const res = await fetch(`/flags/${recordId}`);
+        const data = await res.json();
+
+        document.getElementById("modal-dossier-title").textContent = `Claim Dossier: ${recordId}`;
+        
+        let reportHtml = "";
+        if (data.flag && data.flag.report_text) {
+          reportHtml = formatMarkdown(data.flag.report_text);
+        } else {
+          reportHtml = `<p>Record ID: ${data.record_id}</p><p>Status: ${data.status}</p><p>Verified: ${data.verified}</p>`;
+        }
+
+        document.getElementById("modal-dossier-content").innerHTML = reportHtml;
+        document.getElementById("dossier-modal").style.display = "flex";
+      } catch (err) {
+        console.error(err);
+      }
     }
 
-    function closeDossierModal() {
-      document.getElementById('dossierModal').style.display = 'none';
+    function closeModal() {
+      document.getElementById("dossier-modal").style.display = "none";
+    }
+
+    // Basic Markdown to HTML Formatter
+    function formatMarkdown(md) {
+      return md
+        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+        .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
+        .replace(/\*(.*)\*/gim, '<em>$1</em>')
+        .replace(/^- (.*$)/gim, '<li>$1</li>')
+        .replace(/\n/gim, '<br>');
     }
   </script>
 </body>
