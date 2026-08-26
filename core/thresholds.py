@@ -18,4 +18,6 @@ def delta_crosses_threshold(
     delta: float,   # ndvi_delta or ndwi_delta, native -2..2 scale
     threshold: float,  # from constants above, native -1..1 scale
 ) -> bool:
-    raise NotImplementedError
+    if threshold < 0:
+        return delta <= threshold
+    return delta >= threshold

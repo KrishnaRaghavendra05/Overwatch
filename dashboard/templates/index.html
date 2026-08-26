@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>geo-change-agent — flag status</title>
+  <title>Overwatch — Flag Status</title>
 </head>
 <body>
   <h1>Change Flag Status</h1>
-  <p>Dashboard placeholder — real content in Phase 4.</p>
-  <table>
+  {% if flags %}
+  <table border="1" cellpadding="6" cellspacing="0">
     <thead>
       <tr>
         <th>Record ID</th>
@@ -19,8 +19,19 @@
       </tr>
     </thead>
     <tbody>
-      {# TODO Phase 4: loop over flags and render rows #}
+      {% for flag in flags %}
+      <tr>
+        <td>{{ flag.record_id }}</td>
+        <td>{{ flag.area.min_lon }}, {{ flag.area.min_lat }} → {{ flag.area.max_lon }}, {{ flag.area.max_lat }}</td>
+        <td>{{ flag.status }}</td>
+        <td>{{ flag.written_at }}</td>
+        <td>{{ "✓" if flag.verified else "✗" }}</td>
+      </tr>
+      {% endfor %}
     </tbody>
   </table>
+  {% else %}
+  <p>No flags filed yet. Agent has not submitted any approved reports.</p>
+  {% endif %}
 </body>
 </html>

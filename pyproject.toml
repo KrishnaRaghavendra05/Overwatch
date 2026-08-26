@@ -28,7 +28,7 @@ where = ["."]
 include = ["core*", "agent*", "dashboard*", "scripts*"]
 
 [tool.pytest.ini_options]
-testpaths = ["core/tests"]
+testpaths = ["core/tests", "agent/tests", "dashboard/tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
